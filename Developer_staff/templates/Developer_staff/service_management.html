@@ -1,0 +1,96 @@
+{% extends 'Developer_staff/base_developer.html' %}
+
+{% block title %}My Ticket Queue{% endblock %}
+
+{% block content %}
+<div id="service-management-view">
+    <h1 class="text-4xl font-bold text-gray-800">My Ticket Queue</h1>
+    <p class="mt-2 text-lg text-gray-600">Bugs and technical support tickets assigned to you.</p>
+    
+    <!-- Action Bar / Filter Form -->
+    <form method="GET" class="mt-8 p-4 bg-white rounded-lg shadow-sm">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Filter by Project -->
+            <div>
+                <label for="project-filter" class="text-sm font-medium text-gray-700">Project</label>
+                <select id="project-filter" name="project" class="mt-1 block w-full pl-3 pr-10 py-2 border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                    <option value="">All Projects</option>
+                    {% for project in projects %}
+                        <option value="{{ project.id }}" {% if current_filters.project == project.id|stringformat:"s" %}selected{% endif %}>
+                            {{ project.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Filter by Status -->
+            <div>
+                <label for="status-filter-tickets" class="text-sm font-medium text-gray-700">Status</label>
+                <select id="status-filter-tickets" name="status" class="mt-1 block w-full pl-3 pr-10 py-2 border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                    <option value="">All Statuses</option>
+                    {% for value, label in ticket_statuses %}
+                        <option value="{{ value }}" {% if current_filters.status == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Filter by Priority -->
+            <div>
+                <label for="priority-filter-tickets" class="text-sm font-medium text-gray-700">Priority</label>
+                <select id="priority-filter-tickets" name="priority" class="mt-1 block w-full pl-3 pr-10 py-2 border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                    <option value="">All Priorities</option>
+                    {% for value, label in ticket_priorities %}
+                        <option value="{{ value }}" {% if current_filters.priority == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- Submit Button -->
+            <div class="self-end">
+                <button type="submit" class="w-full inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Ticket List Table -->
+    <div class="mt-8 bg-white shadow-sm rounded-lg overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ticket ID</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reported By</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Updated</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for ticket in tickets %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">{{ ticket.ticket_id }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if ticket.priority == 'HIGH' %}
+                                <span class="material-icons-sharp text-red-500" title="High Priority">signal_cellular_alt</span>
+                            {% elif ticket.priority == 'MEDIUM' %}
+                                <span class="material-icons-sharp text-yellow-500" title="Medium Priority">signal_cellular_alt_2_bar</span>
+                            {% else %}
+                                <span class="material-icons-sharp text-green-500" title="Low Priority">signal_cellular_alt_1_bar</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><a href="#" class="text-blue-600 hover:text-blue-800 hover:underline">{{ ticket.title }}</a></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ticket.project.name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">{{ ticket.get_status_display }}</span></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ticket.reported_by }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ ticket.updated_at|timesince }} ago</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center p-6 text-gray-500">No tickets match your current filters.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+<div class="bg-gray-100 rounded-lg p-4 min-h-[300px]">
+    <h3 class="font-bold text-gray-700 mb-4">{{ status_title }}</h3>
+    <div class="space-y-4">
+        {% for task in tasks %}
+            <div class="bg-white p-4 rounded-lg shadow-sm border border-transparent hover:border-blue-500 cursor-grab active:cursor-grabbing {% if task.status == 'DONE' %}opacity-70{% endif %}">
+                <p class="font-bold text-gray-800 {% if task.status == 'DONE' %}line-through{% endif %}">
+                    {{ task.title }}
+                </p>
+                <div class="flex justify-between items-center mt-3">
+                    <div class="flex -space-x-2 overflow-hidden">
+                        {% if task.assignee %}
+                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-600 ring-2 ring-white" title="{{ task.assignee.username }}">
+                                <span class="text-sm font-medium leading-none text-white">{{ task.assignee.username|first|upper }}</span>
+                            </span>
+                        {% endif %}
+                    </div>
+                    {% if task.priority == 'HIGH' %}
+                        <span class="material-icons-sharp text-red-500" title="High Priority">signal_cellular_alt</span>
+                    {% elif task.priority == 'MEDIUM' %}
+                        <span class="material-icons-sharp text-yellow-500" title="Medium Priority">signal_cellular_alt_2_bar</span>
+                    {% else %}
+                        <span class="material-icons-sharp text-green-500" title="Low Priority">signal_cellular_alt_1_bar</span>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>

@@ -1,0 +1,106 @@
+{% extends 'Developer_staff/base_developer.html' %}
+
+{% block title %}WBS & Sprints{% endblock %}
+
+{% block content %}
+
+<div>
+    <h1 class="text-4xl font-bold text-gray-800">WBS & Sprints</h1>
+
+    <!-- Project Selector Form -->
+    <form method="GET" action="{% url 'Developer_staff:wbs_sprints' %}" class="mt-6">
+        <label for="project-selector" class="sr-only">Select Project</label>
+        <div class="flex items-center space-x-2">
+            <select name="project" class="w-full max-w-lg p-3 text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500" id="project-selector">
+                <option value="">Select a Project to Begin...</option>
+                {% for project in all_projects %}
+                    <option value="{{ project.id }}" {% if selected_project.id == project.id %}selected{% endif %}>
+                        {{ project.name }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="bg-blue-600 text-white px-5 py-3 rounded-md text-lg font-medium hover:bg-blue-700">Load</button>
+        </div>
+    </form>
+
+    <!-- Main Content Area - only shown if a project is selected -->
+    {% if selected_project %}
+    <div class="mt-8" id="wbs-sprints-content">
+        <!-- Tabs -->
+        <div class="border-b border-gray-200">
+            <nav aria-label="Tabs" class="-mb-px flex space-x-8">
+                <button class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-blue-600 border-blue-600" id="tab-sprints-board" onclick="switchWbsTab('sprints-board')">Sprints Board</button>
+                <button class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300" id="tab-wbs" onclick="switchWbsTab('wbs')">Work Breakdown Structure (WBS)</button>
+            </nav>
+        </div>
+
+        <!-- Sprints Board View (Kanban) -->
+        <div class="mt-6" id="sprints-board-view">
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center space-x-4">
+                    <select class="pl-3 pr-10 py-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        {% for sprint in sprints %}
+                            <option value="{{ sprint.id }}">{{ sprint.name }} ({{ sprint.start_date|date:"M d" }} - {{ sprint.end_date|date:"M d" }})</option>
+                        {% empty %}
+                            <option value="">No sprints found for this project</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button class="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700">
+                    <span class="material-icons-sharp mr-2 -ml-1">add</span> New Task
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                <!-- Helper for rendering task cards to avoid repetition -->
+                <!-- THIS BLOCK IS NOW CORRECTED -->
+                {% include "Developer_staff/_task_card.html" with status_title="Backlog" tasks=tasks_by_status.backlog %}
+                {% include "Developer_staff/_task_card.html" with status_title="To Do" tasks=tasks_by_status.todo %}
+                {% include "Developer_staff/_task_card.html" with status_title="In Progress" tasks=tasks_by_status.in_progress %}
+                {% include "Developer_staff/_task_card.html" with status_title="In Review" tasks=tasks_by_status.in_review %}
+                {% include "Developer_staff/_task_card.html" with status_title="Done" tasks=tasks_by_status.done %}
+            </div>
+        </div>
+
+        <!-- WBS View (Static Placeholder for now) -->
+        <div class="mt-6 hidden" id="wbs-view">
+            <p class="p-4 bg-yellow-100 text-yellow-800 rounded-md">The Work Breakdown Structure view is a placeholder. It will be made dynamic in a future update.</p>
+            <div class="bg-white shadow-sm rounded-lg mt-4">
+                <div class="grid grid-cols-12 gap-x-6 px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <div class="col-span-6">Name</div>
+                    <div class="col-span-4">Progress</div>
+                    <div class="col-span-2">Status</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// This script handles the tab switching.
+function switchWbsTab(tabId) {
+    const sprintsBoardView = document.getElementById('sprints-board-view');
+    const wbsView = document.getElementById('wbs-view');
+    const sprintsBoardTab = document.getElementById('tab-sprints-board');
+    const wbsTab = document.getElementById('tab-wbs');
+    
+    if (tabId === 'sprints-board') {
+        sprintsBoardView.style.display = 'block';
+        wbsView.style.display = 'none';
+        sprintsBoardTab.classList.add('text-blue-600', 'border-blue-600');
+        sprintsBoardTab.classList.remove('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+        wbsTab.classList.remove('text-blue-600', 'border-blue-600');
+        wbsTab.classList.add('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+    } else {
+        sprintsBoardView.style.display = 'none';
+        wbsView.style.display = 'block';
+        wbsTab.classList.add('text-blue-600', 'border-blue-600');
+        wbsTab.classList.remove('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+        sprintsBoardTab.classList.remove('text-blue-600', 'border-blue-600');
+        sprintsBoardTab.classList.add('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+    }
+}
+</script>
+
+{% endblock %}

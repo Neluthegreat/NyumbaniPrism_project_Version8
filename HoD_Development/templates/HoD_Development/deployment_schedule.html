@@ -1,0 +1,110 @@
+{% extends 'HoD_Development/base.html' %}
+
+{% block title %}Deployment Schedule{% endblock %}
+
+{% block content %}
+<div id="deployment-schedule-view">
+    <header class="mb-8">
+        <nav class="text-sm font-medium text-gray-500 mb-2">
+            <a class="hover:text-blue-600 cursor-pointer" href="{% url 'HoD_Development:service_management' %}">Service Management</a>
+            <span class="mx-2">&gt;</span>
+            <span class="text-gray-700">Deployment Schedule</span>
+        </nav>
+        <div class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-gray-900">Deployment Schedule</h1>
+            <div class="flex items-center bg-gray-100 rounded-lg p-1">
+                <button class="px-4 py-2 text-sm font-semibold rounded-md bg-blue-600 text-white" id="calendar-toggle" onclick="showCalendarView()">Calendar View</button>
+                <button class="px-4 py-2 text-sm font-semibold text-gray-600 rounded-md hover:bg-gray-200" id="list-toggle" onclick="showListView()">List View</button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Calendar View -->
+    <div id="calendar-view">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center mb-6">
+                <button class="text-gray-600 hover:text-gray-800"><span class="material-icons">chevron_left</span></button>
+                <h2 class="text-xl font-semibold">November 2023</h2>
+                <button class="text-gray-600 hover:text-gray-800"><span class="material-icons">chevron_right</span></button>
+            </div>
+            <div class="grid grid-cols-7 gap-px bg-gray-200 border border-gray-200">
+                <!-- Calendar header -->
+                <div class="bg-gray-50 text-center font-semibold py-2 text-sm text-gray-600">Sun</div>
+                <div class="bg-gray-50 text-center font-semibold py-2 text-sm text-gray-600">Mon</div>
+                <div class="bg-gray-50 text-center font-semibold py-2 text-sm text-gray-600">Tue</div>
+                <div class="bg-gray-50 text-center font-semibold py-2 text-sm text-gray-600">Wed</div>
+                <div class="bg-gray-50 text-center font-semibold py-2 text-sm text-gray-600">Thu</div>
+                <div class="bg-gray-50 text-center font-semibold py-2 text-sm text-gray-600">Fri</div>
+                <div class="bg-gray-50 text-center font-semibold py-2 text-sm text-gray-600">Sat</div>
+                
+                <!-- In a real app, this calendar grid would be generated dynamically -->
+                <div class="bg-white p-2 min-h-[120px] text-gray-400">29</div>
+                <div class="bg-white p-2 min-h-[120px] text-gray-400">30</div>
+                <div class="bg-white p-2 min-h-[120px] text-gray-400">31</div>
+                <div class="bg-white p-2 min-h-[120px]">1</div>
+                <div class="bg-white p-2 min-h-[120px]">2</div>
+                <div class="bg-white p-2 min-h-[120px] cursor-pointer" onclick="openDeploymentModal()">3
+                    <div class="bg-blue-100 border border-blue-300 text-blue-800 p-1 mt-1 rounded text-xs">
+                        <p class="font-semibold">Project Phoenix</p>
+                        <p>Scheduled</p>
+                    </div>
+                </div>
+                <div class="bg-white p-2 min-h-[120px]">4</div>
+                <!-- ... other calendar days from original HTML ... -->
+            </div>
+        </div>
+    </div>
+
+    <!-- List View (Initially hidden) -->
+    <div class="hidden" id="list-view">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <table class="w-full text-left">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider">Project Name</th>
+                        <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider">Deployment Date</th>
+                        <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider">Status</th>
+                        <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider">Lead Developer</th>
+                        <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider">Change Request</th>
+                        <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                     <!-- In a real app, this table body would be generated with a Django for loop -->
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-4 font-medium text-gray-800">Project Phoenix</td>
+                        <td class="p-4 text-gray-600">2023-11-03</td>
+                        <td class="p-4"><span class="px-2 py-1 text-xs font-semibold text-blue-800 bg-blue-100 rounded-full">Scheduled</span></td>
+                        <td class="p-4 text-gray-600">Sarah Chen</td>
+                        <td class="p-4"><a class="text-blue-600 hover:underline" href="#">CR-12345</a></td>
+                        <td class="p-4"><button class="text-blue-600 hover:underline" onclick="openDeploymentModal()">View Details</button></td>
+                    </tr>
+                    <!-- ... other list items from original HTML ... -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Remember that the JavaScript functions to control this page are in base.html -->
+<script>
+    // This script block is here for clarity, but the actual functions are in base.html
+    function showCalendarView() {
+        document.getElementById('calendar-view').classList.remove('hidden');
+        document.getElementById('list-view').classList.add('hidden');
+        document.getElementById('calendar-toggle').classList.add('bg-blue-600', 'text-white');
+        document.getElementById('calendar-toggle').classList.remove('text-gray-600', 'hover:bg-gray-200');
+        document.getElementById('list-toggle').classList.add('text-gray-600', 'hover:bg-gray-200');
+        document.getElementById('list-toggle').classList.remove('bg-blue-600', 'text-white');
+    }
+
+    function showListView() {
+        document.getElementById('calendar-view').classList.add('hidden');
+        document.getElementById('list-view').classList.remove('hidden');
+        document.getElementById('list-toggle').classList.add('bg-blue-600', 'text-white');
+        document.getElementById('list-toggle').classList.remove('text-gray-600', 'hover:bg-gray-200');
+        document.getElementById('calendar-toggle').classList.add('text-gray-600', 'hover:bg-gray-200');
+        document.getElementById('calendar-toggle').classList.remove('bg-blue-600', 'text-white');
+    }
+</script>
+{% endblock %}

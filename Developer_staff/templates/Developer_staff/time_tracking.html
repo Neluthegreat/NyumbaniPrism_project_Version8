@@ -1,0 +1,86 @@
+{% extends 'Developer_staff/base_developer.html' %}
+
+{% block title %}Time Tracking{% endblock %}
+
+{% block content %}
+<div id="time-tracking-view">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-4xl font-bold text-gray-800">Time Tracking</h1>
+            <p class="mt-2 text-gray-600">Log your hours to ensure accurate project costing and payroll.</p>
+        </div>
+            <a href="{% url 'Developer_staff:time_log' %}" class="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                <span class="material-icons-sharp mr-2 -ml-1">add_alarm</span>
+                Log Time
+            </a>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow-sm">
+            <h3 class="text-sm font-medium text-gray-500">Hours Logged Today</h3>
+            <p class="mt-2 text-3xl font-bold text-gray-900">{{ duration_today }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-sm">
+            <h3 class="text-sm font-medium text-gray-500">Hours Logged This Week</h3>
+            <p class="mt-2 text-3xl font-bold text-gray-900">{{ duration_this_week }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-sm {% if overdue_days > 0 %}border border-red-300{% endif %}">
+            <h3 class="text-sm font-medium {% if overdue_days > 0 %}text-red-600{% else %}text-gray-500{% endif %}">Overdue Time Entries</h3>
+            <p class="mt-2 text-3xl font-bold {% if overdue_days > 0 %}text-red-700{% else %}text-gray-900{% endif %}">{{ overdue_days }} days</p>
+        </div>
+    </div>
+
+    <!-- Timesheet Table -->
+    <div class="bg-white p-6 rounded-lg shadow-sm">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold text-gray-800">My Timesheet</h2>
+            <div class="flex items-center space-x-4">
+                <select class="pl-3 pr-10 py-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <option>This Week</option>
+                    <option>Last Week</option>
+                </select>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Project Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Task Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Duration</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" scope="col">Notes</th>
+                        <th class="relative px-6 py-3" scope="col"><span class="sr-only">Actions</span></th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for entry in time_entries %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ entry.date|date:"Y-m-d" }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ entry.project.name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {% if entry.task %}
+                                {{ entry.task.title }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ entry.duration }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 truncate max-w-xs">{{ entry.notes|default:"-" }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button class="text-blue-600 hover:text-blue-900"><span class="material-icons-sharp text-base">edit</span></button>
+                            <button class="text-red-600 hover:text-red-900 ml-4"><span class="material-icons-sharp text-base">delete</span></button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-6 text-gray-500">You have not logged any time yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

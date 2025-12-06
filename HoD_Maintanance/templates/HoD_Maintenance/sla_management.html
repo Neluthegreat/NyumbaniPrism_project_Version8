@@ -1,0 +1,103 @@
+{% extends 'HoD_Maintenance/base.html' %}
+
+{% block title %}SLA Management{% endblock %}
+
+{% block content %}
+
+<!-- Main SLA Dashboard View -->
+<div id="sla-dashboard">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-4xl font-bold text-gray-800">SLA Policies</h1>
+        <button id="new-sla-policy-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 flex items-center">
+            <span class="material-icons-outlined mr-2">add</span>New SLA Policy
+        </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex items-center space-x-4 mb-6">
+        <div class="relative flex-grow">
+            <span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+            <input type="text" placeholder="Search policies..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 w-full"/>
+        </div>
+        <div>
+            <label for="sla-status-filter" class="text-sm font-medium text-gray-700">Status</label>
+            <select id="sla-status-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                <option>All</option>
+                <option>Active</option>
+                <option>Inactive</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- SLA Policies Table -->
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Policy Name</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Created</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Critical Priority Incidents</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Response and resolution for critical system failures.</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-11-15 09:00 AM</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <span class="material-icons-outlined text-gray-500 hover:text-indigo-600 cursor-pointer">edit</span>
+                        <span class="material-icons-outlined text-gray-500 hover:text-red-600 cursor-pointer ml-4">delete_outline</span>
+                    </td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Standard Hardware Requests</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Standard fulfillment times for approved hardware.</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-200 text-gray-800">Inactive</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-10-01 02:30 PM</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <span class="material-icons-outlined text-gray-500 hover:text-indigo-600 cursor-pointer">edit</span>
+                        <span class="material-icons-outlined text-gray-500 hover:text-red-600 cursor-pointer ml-4">delete_outline</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- ======================= POPUP MODAL for New SLA Policy ======================= -->
+<div id="new-sla-popup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-lg shadow-xl w-1/2 p-8 max-h-full overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">New SLA Policy</h2>
+            <button id="close-sla-popup" class="text-gray-400 hover:text-gray-600">
+                <span class="material-icons-outlined">close</span>
+            </button>
+        </div>
+        <div class="space-y-4">
+            <div>
+                <label for="sla-policy-name" class="block text-sm font-medium text-gray-700">Policy Name</label>
+                <input type="text" id="sla-policy-name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+            </div>
+            <div>
+                <label for="sla-policy-desc" class="block text-sm font-medium text-gray-700">Description</label>
+                <textarea id="sla-policy-desc" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+            </div>
+            <!-- Conditions section can be made dynamic later -->
+        </div>
+        <div class="flex justify-end space-x-4 mt-8">
+            <button id="cancel-sla-creation" class="bg-white text-gray-700 border border-gray-300 font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-gray-50">Cancel</button>
+            <button id="save-sla-policy" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">Save Policy</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

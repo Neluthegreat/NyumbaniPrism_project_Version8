@@ -1,0 +1,106 @@
+{% extends 'HoD_Development/base.html' %}
+
+{% block title %}My Asset Requisitions{% endblock %}
+
+{% block content %}
+<div id="my-requisitions-view">
+    <header class="mb-8">
+        <nav class="text-sm font-medium text-gray-500 mb-4">
+            <!-- Corrected link using Django's URL tag -->
+            <a class="text-blue-600 hover:underline" href="{% url 'HoD_Development:store_inventory' %}">Store &amp; Inventory</a>
+            <span class="mx-2">&gt;</span>
+            <span class="text-gray-700">My Asset Requisitions</span>
+        </nav>
+        <h1 class="text-3xl font-bold text-gray-900">My Asset Requisitions</h1>
+    </header>
+
+    <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
+            <h3 class="font-semibold text-gray-800 lg:col-span-1">Filters:</h3>
+            <div class="lg:col-span-1">
+                <select class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    <option>All Statuses</option>
+                    <option>Pending</option>
+                    <option>Approved</option>
+                    <option>Denied</option>
+                    <option>Fulfilled</option>
+                </select>
+            </div>
+            <div class="relative lg:col-span-2">
+                 <input class="pl-4 pr-10 py-2 border rounded-lg w-full focus:ring-blue-500 focus:border-blue-500" placeholder="Filter by Date Range" type="text" onfocus="(this.type='date')" onblur="(this.type='text')"/>
+                 <span class="material-icons absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">calendar_today</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider"></th>
+                        <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider cursor-pointer">Requisition ID <span class="material-icons text-sm align-middle text-gray-400">sort</span></th>
+                        <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider cursor-pointer">Asset Name <span class="material-icons text-sm align-middle text-gray-400">sort</span></th>
+                        <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider cursor-pointer">Quantity <span class="material-icons text-sm align-middle text-gray-400">sort</span></th>
+                        <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider cursor-pointer">Submitted On <span class="material-icons text-sm align-middle text-gray-400">sort</span></th>
+                        <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider cursor-pointer">Status <span class="material-icons text-sm align-middle text-gray-400">sort</span></th>
+                        <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider cursor-pointer">Associated Project <span class="material-icons text-sm align-middle text-gray-400">sort</span></th>
+                        <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider">Approver Notes</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <!-- In a real app, this table body would be generated with a Django for loop -->
+                    <!-- Example Row 1 -->
+                    <tr class="hover:bg-gray-50 cursor-pointer" data-target="details-1" onclick="toggleRequisitionDetails(this)">
+                        <td class="p-4"><span class="material-icons expand-icon text-gray-500">expand_more</span></td>
+                        <td class="p-4 font-medium text-blue-600">REQ-00125</td>
+                        <td class="p-4 font-medium text-gray-800">M2 MacBook Pro 16"</td>
+                        <td class="p-4 text-gray-600 text-center">2</td>
+                        <td class="p-4 text-gray-600">2023-11-12</td>
+                        <td class="p-4"><span class="px-2 py-1 text-xs font-semibold text-yellow-800 bg-yellow-100 rounded-full">Pending</span></td>
+                        <td class="p-4 text-gray-600">Project Titan</td>
+                        <td class="p-4 text-gray-600 italic">--</td>
+                    </tr>
+                    <tr id="details-1" class="hidden">
+                        <td colspan="8" class="p-0">
+                            <div class="bg-gray-50 p-6">
+                                <!-- ... Details for REQ-00125 ... -->
+                            </div>
+                        </td>
+                    </tr>
+                     <!-- Example Row 2 -->
+                    <tr class="hover:bg-gray-50 cursor-pointer" data-target="details-2" onclick="toggleRequisitionDetails(this)">
+                        <td class="p-4"><span class="material-icons expand-icon text-gray-500">expand_more</span></td>
+                        <td class="p-4 font-medium text-blue-600">REQ-00124</td>
+                        <td class="p-4 font-medium text-gray-800">Sentry Performance Monitoring</td>
+                        <td class="p-4 text-gray-600 text-center">1</td>
+                        <td class="p-4 text-gray-600">2023-11-05</td>
+                        <td class="p-4"><span class="px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Denied</span></td>
+                        <td class="p-4 text-gray-600">Omega Initiative</td>
+                        <td class="p-4 text-red-600 truncate">Budget exceeded for this project.</td>
+                    </tr>
+                    <tr id="details-2" class="hidden">
+                         <td colspan="8" class="p-0">
+                            <div class="bg-gray-50 p-6">
+                                <!-- ... Details for REQ-00124 ... -->
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Make sure the toggleRequisitionDetails function is in your base.html -->
+<script>
+    function toggleRequisitionDetails(row) {
+        const targetId = row.dataset.target;
+        const detailsRow = document.getElementById(targetId);
+        const isExpanded = !detailsRow.classList.contains('hidden');
+        
+        row.classList.toggle('expanded', !isExpanded);
+        detailsRow.classList.toggle('hidden', isExpanded);
+    }
+</script>
+{% endblock %}

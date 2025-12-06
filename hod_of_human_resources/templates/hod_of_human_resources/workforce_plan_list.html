@@ -1,0 +1,33 @@
+{% extends "hod_of_human_resources/base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Workforce Plans</h2>
+    <a href="{% url 'hod_of_human_resources:workforce_plan_create' %}" class="btn btn-primary mb-3">Create New Plan</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Position</th>
+                <th>Department</th>
+                <th>Headcount Needed</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for plan in plans %}
+            <tr>
+                <td>{{ plan.position }}</td>
+                <td>{{ plan.department.departmentname }}</td>
+                <td>{{ plan.headcount_needed }}</td>
+                <td>{{ plan.status }}</td>
+                <td>
+                    <a href="{% url 'hod_of_human_resources:workforce_plan_update' plan.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{% url 'hod_of_human_resources:workforce_plan_delete' plan.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

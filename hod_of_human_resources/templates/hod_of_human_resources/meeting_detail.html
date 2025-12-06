@@ -1,0 +1,29 @@
+{% extends "hod_of_human_resources/base.html" %}
+
+{% block title %}Meeting Details{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">{{ meeting.title }}</h1>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Meeting Details</h6>
+        </div>
+        <div class="card-body">
+            <p><strong>Purpose:</strong> {{ meeting.purpose }}</p>
+            <p><strong>Venue:</strong> {{ meeting.venue }}</p>
+            <p><strong>Time:</strong> {{ meeting.meeting_time|date:"Y-m-d H:i" }}</p>
+            <p><strong>Created By:</strong> {{ meeting.created_by.username }}</p>
+            <p><strong>Participants:</strong></p>
+            <ul>
+                {% for participant in meeting.participants.all %}
+                <li>{{ participant.username }}</li>
+                {% endfor %}
+            </ul>
+            <a href="{% url 'hod_of_human_resources:meeting_list' %}" class="btn btn-secondary">Back to Meetings</a>
+            <a href="{% url 'hod_of_human_resources:meeting_update' meeting.pk %}" class="btn btn-warning">Edit</a>
+            <a href="{% url 'hod_of_human_resources:meeting_delete' meeting.pk %}" class="btn btn-danger">Delete</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

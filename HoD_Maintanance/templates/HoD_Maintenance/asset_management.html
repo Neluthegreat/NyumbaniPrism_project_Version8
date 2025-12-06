@@ -1,0 +1,120 @@
+{% extends 'HoD_Maintenance/base.html' %}
+
+{% block title %}Asset Management{% endblock %}
+
+{% block content %}
+
+<!-- Asset Management Dashboard -->
+<div id="asset-dashboard">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-4xl font-bold text-gray-800">Asset Management</h1>
+        <div class="flex items-center space-x-4">
+            <button id="new-asset-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 flex items-center">
+                <span class="material-icons-outlined mr-2">add</span>New Asset
+            </button>
+            <div class="relative">
+                <span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+                <input type="text" placeholder="Search by name, ID, or user..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 w-80"/>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex items-center space-x-4 mb-6">
+        <div>
+            <label class="text-sm font-medium text-gray-700" for="asset-category-filter">Category</label>
+            <select id="asset-category-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                <option>All</option><option>Laptop</option><option>Printer</option><option>Software</option><option>Server</option>
+            </select>
+        </div>
+        <div>
+            <label class="text-sm font-medium text-gray-700" for="asset-status-filter">Status</label>
+            <select id="asset-status-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                <option>All</option><option>In Use</option><option>In Stock</option><option>In Repair</option><option>Retired</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Assets Table -->
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned To</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">ASSET-001</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600 hover:underline"><a href="#">MacBook Pro 16"</a></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Laptop</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">John Doe</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">In Use</span></td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">ASSET-002</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600 hover:underline"><a href="#">HP Indigo 7900</a></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Printer</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Printing Floor</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">In Repair</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ======================= POPUP MODAL for New Asset ======================= -->
+<div id="new-asset-popup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl p-8 max-h-full overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Add New Asset</h2>
+            <button id="close-asset-popup" class="text-gray-400 hover:text-gray-600">
+                <span class="material-icons-outlined">close</span>
+            </button>
+        </div>
+        <div class="space-y-6">
+            <div>
+                <h3 class="text-lg font-medium text-gray-800 border-b pb-2 mb-4">Core Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="asset-name" class="block text-sm font-medium text-gray-700">Asset Name</label>
+                        <input type="text" id="asset-name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div>
+                        <label for="asset-category" class="block text-sm font-medium text-gray-700">Category</label>
+                        <select id="asset-category" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 rounded-md shadow-sm">
+                            <option>Laptop</option><option>Printer</option><option>Software</option><option>Server</option>
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="asset-description" class="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea id="asset-description" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h3 class="text-lg font-medium text-gray-800 border-b pb-2 mb-4">Purchase Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="asset-purchase-date" class="block text-sm font-medium text-gray-700">Purchase Date</label>
+                        <input type="date" id="asset-purchase-date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div>
+                        <label for="asset-purchase-cost" class="block text-sm font-medium text-gray-700">Purchase Cost</label>
+                        <input type="number" id="asset-purchase-cost" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-end space-x-4 mt-8">
+            <button id="cancel-asset-creation" class="bg-white text-gray-700 border border-gray-300 font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-gray-50">Cancel</button>
+            <button id="save-asset-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">Save Asset</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

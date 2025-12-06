@@ -1,0 +1,93 @@
+{% extends 'HoD_Development/base.html' %}
+
+{% block title %}Customer Management{% endblock %}
+
+{% block content %}
+<div id="customer-management-view">
+    <header class="mb-8">
+        <nav class="text-sm font-medium text-gray-500 mb-2">
+            <span class="text-gray-700">Customer Management</span>
+        </nav>
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Customer Management</h1>
+                <p class="text-gray-500 mt-1">Portfolio overview of all active clients.</p>
+            </div>
+            <button class="bg-white border border-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors flex items-center" onclick="window.location.href='{% url 'HoD_Development:client_health_dashboard' %}'">
+                <span class="material-icons mr-2">analytics</span>
+                Client Health Dashboard
+            </button>
+        </div>
+    </header>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-gray-500 text-sm font-medium">Total Active Clients</h3>
+            <p class="text-4xl font-bold text-blue-600 mt-2">128</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-gray-500 text-sm font-medium">Clients with Active Projects</h3>
+            <p class="text-4xl font-bold text-green-600 mt-2">34</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-gray-500 text-sm font-medium">Clients with High-Priority Tickets</h3>
+            <p class="text-4xl font-bold text-red-600 mt-2">18</p>
+        </div>
+    </div>
+    <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
+            <div class="relative">
+                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+                <input class="pl-10 pr-4 py-2 border rounded-lg w-full focus:ring-blue-500 focus:border-blue-500" placeholder="Search by Client Name" type="text"/>
+            </div>
+            <div>
+                <select class="w-full border rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                    <option>Filter by Client Health Score</option>
+                    <option>Healthy</option>
+                    <option>At Risk</option>
+                    <option>Needs Attention</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <table class="w-full text-left">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider cursor-pointer">Client Name <span class="material-icons text-sm align-middle text-gray-400">sort</span></th>
+                    <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider cursor-pointer">Active Projects <span class="material-icons text-sm align-middle text-gray-400">sort</span></th>
+                    <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider cursor-pointer">Open Tickets <span class="material-icons text-sm align-middle text-gray-400">sort</span></th>
+                    <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider cursor-pointer">Health Score <span class="material-icons text-sm align-middle text-gray-400">sort</span></th>
+                    <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider cursor-pointer">Primary Technical Contact <span class="material-icons text-sm align-middle text-gray-400">sort</span></th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location.href='{% url 'HoD_Development:client_360_view' %}'">
+                    <td class="p-4 font-medium text-gray-800">Global Tech Inc.</td>
+                    <td class="p-4 text-gray-600 text-center">3</td>
+                    <td class="p-4 text-gray-600 text-center">5</td>
+                    <td class="p-4 text-gray-600">
+                        <div class="flex items-center">
+                            <span class="material-icons text-green-500 mr-2">sentiment_very_satisfied</span>
+                            <span class="font-semibold text-green-600">95/100</span>
+                        </div>
+                    </td>
+                    <td class="p-4 text-gray-600">John Doe</td>
+                </tr>
+                <!-- ... other table rows, remember to update their onclick events as well ... -->
+                <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location.href='{% url 'HoD_Development:client_360_view' %}'">
+                    <td class="p-4 font-medium text-gray-800">Innovate Solutions</td>
+                    <td class="p-4 text-gray-600 text-center">1</td>
+                    <td class="p-4 text-gray-600 text-center">12</td>
+                    <td class="p-4 text-gray-600">
+                        <div class="flex items-center">
+                            <span class="material-icons text-yellow-500 mr-2">sentiment_neutral</span>
+                            <span class="font-semibold text-yellow-600">72/100</span>
+                        </div>
+                    </td>
+                    <td class="p-4 text-gray-600">Jane Smith</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

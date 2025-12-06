@@ -1,0 +1,161 @@
+{% extends 'hod_of_human_resources/base.html' %}
+{% load static %}
+
+{% block title %}System Settings - PRISM HR{% endblock %}
+{% block active_view %}settings{% endblock %}
+
+{% block content %}
+<!-- System Settings View -->
+<div x-show="activeView === 'settings'" x-cloak>
+    <div class="container-fluid">
+        <header class="mb-4">
+            <h1 class="text-3xl font-bold text-gray-800">System Settings</h1>
+            <p class="text-gray-500 mt-1">Configure your notification preferences, approval workflows, and account settings.</p>
+        </header>
+
+        <div class="card shadow-sm border-light">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" id="settingsTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Profile & Security</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="notifications-tab" data-bs-toggle="tab" data-bs-target="#notifications" type="button" role="tab" aria-controls="notifications" aria-selected="false">Notifications</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="workflows-tab" data-bs-toggle="tab" data-bs-target="#workflows" type="button" role="tab" aria-controls="workflows" aria-selected="false">Approvals & Compliance</button>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content" id="settingsTabsContent">
+                    <!-- Profile & Security Pane -->
+                    <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <h5 class="mb-4">User Information</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="userName" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="userName" value="Jane Doe (HR Manager)" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="userRole" class="form-label">Role</label>
+                                <input type="text" class="form-control" id="userRole" value="Head of Human Resources" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="userEmail" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="userEmail" value="jane.doe@prismcorp.tz">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="userPhone" class="form-label">Phone Number</label>
+                                <input type="text" class="form-control" id="userPhone" value="+255 784 123 456">
+                            </div>
+                        </div>
+                        <hr class="my-4">
+                        <h5 class="mb-3">Security</h5>
+                        <button class="btn btn-secondary">Change Password</button>
+                    </div>
+                    
+                    <!-- Notifications Pane -->
+                    <div class="tab-pane fade" id="notifications" role="tabpanel" aria-labelledby="notifications-tab">
+                        <h5 class="mb-4">Configure Event Notifications</h5>
+                        <p class="text-muted">Choose how you want to be notified for key HR events.</p>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Event</th>
+                                    <th class="text-center">In-App</th>
+                                    <th class="text-center">Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>New Job Requisition Submitted</td>
+                                    <td class="text-center">
+                                        <div class="form-check form-switch d-inline-block">
+                                          <input class="form-check-input" type="checkbox" role="switch" id="notif1-app" checked>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="form-check form-switch d-inline-block">
+                                          <input class="form-check-input" type="checkbox" role="switch" id="notif1-email" checked>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>High-Priority HR Case Opened</td>
+                                    <td class="text-center">
+                                        <div class="form-check form-switch d-inline-block">
+                                          <input class="form-check-input" type="checkbox" role="switch" id="notif2-app" checked>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="form-check form-switch d-inline-block">
+                                          <input class="form-check-input" type="checkbox" role="switch" id="notif2-email" checked>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Policy Awaiting Your Review</td>
+                                    <td class="text-center">
+                                        <div class="form-check form-switch d-inline-block">
+                                          <input class="form-check-input" type="checkbox" role="switch" id="notif3-app" checked>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="form-check form-switch d-inline-block">
+                                          <input class="form-check-input" type="checkbox" role="switch" id="notif3-email" checked>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Policy Awaiting Your Review</td>
+                                    <td class="text-center">
+                                        <div class="form-check form-switch d-inline-block">
+                                          <input class="form-check-input" type="checkbox" role="switch" id="notif4-app" checked>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="form-check form-switch d-inline-block">
+                                          <input class="form-check-input" type="checkbox" role="switch" id="notif4-email" checked>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Policy Awaiting Your Review</td>
+                                    <td class="text-center">
+                                        <div class="form-check form-switch d-inline-block">
+                                          <input class="form-check-input" type="checkbox" role="switch" id="notif5-app" checked>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="form-check form-switch d-inline-block">
+                                          <input class="form-check-input" type="checkbox" role="switch" id="notif5-email" checked>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Policy Awaiting Your Review</td>
+                                    <td class="text-center">
+                                        <div class="form-check form-switch d-inline-block">
+                                          <input class="form-check-input" type="checkbox" role="switch" id="notif6-app" checked>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="form-check form-switch d-inline-block">
+                                          <input class="form-check-input" type="checkbox" role="switch" id="notif6-email" checked>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                <label for="notifications" class="form-label">Notifications</label>
+                        <div class="row g-3">
+                          
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+                          

@@ -1,0 +1,482 @@
+{% extends 'hod_of_human_resources/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}HR Management - PRISM HR{% endblock %}
+{% block active_view %}hrManagement{% endblock %}
+{% block active_hr_tab %}{{ active_tab }}{% endblock %}
+
+{% block content %}
+<div x-data="{
+    activeHrTab: '{{ active_tab }}',
+    openForecastModal: false,
+    openBudgetModal: false,
+    openViewRequisitionModal: false,
+    openPolicyUploadModal: false,
+    openManageCaseModal: false,
+    openSuccessionPlanModal: false,
+    selectedRequisition: null,
+    selectedCase: null,
+    selectedPolicy: null,
+    selectedSuccessionPlan: null
+}" x-show="activeView === 'hrManagement'" x-cloak>
+    <header class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">HR Management</h1>
+            <p class="text-gray-500 mt-1">Oversee all human resources operations, from strategic planning to employee relations.</p>
+        </div>
+    </header>
+    
+    <div class="border-b border-gray-200">
+        <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+            <a href="{% url 'hod_of_human_resources:hr_management' %}?tab=workforce" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" :class="{'border-blue-500 text-blue-600': activeHrTab === 'workforce', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeHrTab !== 'workforce'}">Workforce Planning</a>
+            <a href="{% url 'hod_of_human_resources:hr_management' %}?tab=requisition" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" :class="{'border-blue-500 text-blue-600': activeHrTab === 'requisition', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeHrTab !== 'requisition'}">Requisition Approval</a>
+            <a href="{% url 'hod_of_human_resources:hr_management' %}?tab=policy" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" :class="{'border-blue-500 text-blue-600': activeHrTab === 'policy', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeHrTab !== 'policy'}">Policy Management</a>
+            <a href="{% url 'hod_of_human_resources:hr_management' %}?tab=dispute" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" :class="{'border-blue-500 text-blue-600': activeHrTab === 'dispute', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeHrTab !== 'dispute'}">Dispute Resolution</a>
+            <a href="{% url 'hod_of_human_resources:hr_management' %}?tab=succession" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" :class="{'border-blue-500 text-blue-600': activeHrTab === 'succession', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeHrTab !== 'succession'}">Succession Planning</a>
+            <a href="{% url 'hod_of_human_resources:hr_management' %}?tab=meetings" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" :class="{'border-blue-500 text-blue-600': activeHrTab === 'meetings', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeHrTab !== 'meetings'}">Meeting Management</a>
+        </nav>
+    </div>
+    
+    <div class="mt-8">
+        <div x-show="activeHrTab === 'workforce'" x-cloak>
+            <a href="{% url 'hod_of_human_resources:workforce_plan_list' %}" class="btn btn-primary mb-3">Manage Workforce Plans</a>
+        </div>
+        
+        <div x-show="activeHrTab === 'requisition'" x-cloak>
+            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Pending Job Requisitions</h3>
+                    <div class="flex space-x-2">
+                        <span class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">Pending: {{ requisitions|length }}</span>
+                        <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/10">Approved (Last 30d): 8</span>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted By</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th scope="col" class="relative px-6 py-3"><span class="sr-only">Actions</span></th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for requisition in requisitions %}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ requisition.position }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ requisition.department.departmentname }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ requisition.requested_by.username }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ requisition.created_at|date:"Y-m-d" }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if requisition.status == 'pending' %}
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending HR Approval</span>
+                                    {% elif requisition.status == 'approved' %}
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Approved</span>
+                                    {% else %}
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Rejected</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                                    {% if requisition.status == 'pending' %}
+                                        <a href="{% url 'hod_of_human_resources:approve_requisition' requisition.requisition_id %}" class="text-green-600 hover:text-green-900">Approve</a>
+                                        <a href="{% url 'hod_of_human_resources:reject_requisition' requisition.requisition_id %}" class="text-red-600 hover:text-red-900">Reject</a>
+                                    {% endif %}
+                                    <a href="{% url 'hod_of_human_resources:requisition_update' requisition.requisition_id %}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                    <a href="{% url 'hod_of_human_resources:requisition_delete' requisition.requisition_id %}" class="text-red-600 hover:text-red-900">Delete</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div x-show="activeHrTab === 'policy'" x-cloak>
+            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Company Policy Repository</h3>
+                    <a @click="openPolicyUploadModal = true" href="#" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md flex items-center space-x-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" x2="12" y1="3" y2="15"></line>
+                        </svg>
+                        <span>Upload New Policy</span>
+                    </a>
+                </div>
+                <p class="text-gray-600 mb-6">Author, update, and publish all official HR policies and legal documents. Ensure all employees have access to the latest versions.</p>
+                <ul role="list" class="divide-y divide-gray-200">
+                    {% for policy in policies %}
+                    <li class="py-4 flex">
+                        <div class="ml-3 flex-1">
+                            <p class="text-sm font-medium text-gray-900">{{ policy.title }}</p>
+                            <p class="text-sm text-gray-500">Version {{ policy.version }} | Last Updated: {{ policy.updated_at|date:"Y-m-d" }} | Status: 
+                                <span class="font-semibold {% if policy.status == 'active' %}text-green-600{% elif policy.status == 'draft' %}text-yellow-600{% else %}text-red-600{% endif %}">{{ policy.status|title }}</span>
+                            </p>
+                        </div>
+                        <a href="{% url 'hod_of_human_resources:view_policy' policy.id %}" class="ml-4 bg-white p-2 rounded-md text-gray-400 hover:text-gray-500">View</a>
+                        <a href="{% url 'hod_of_human_resources:edit_policy' policy.id %}" class="ml-4 bg-white p-2 rounded-md text-gray-400 hover:text-gray-500">Edit</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div x-show="activeHrTab === 'dispute'" x-cloak>
+            <a href="{% url 'hod_of_human_resources:dispute_list' %}" class="btn btn-primary mb-3">Manage Disputes</a>
+        </div>
+        
+        <div x-show="activeHrTab === 'succession'" x-cloak>
+            <a href="{% url 'hod_of_human_resources:succession_plan_list' %}" class="btn btn-primary mb-3">Manage Succession Plans</a>
+        </div>
+        
+        <div x-show="activeHrTab === 'meetings'" x-cloak>
+            <a href="{% url 'hod_of_human_resources:meeting_list' %}" class="btn btn-primary mb-3">Manage Meetings</a>
+        </div>
+    </div>
+    
+    <div x-show="openForecastModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div x-show="openForecastModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+    
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+    
+        <div x-show="openForecastModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+          <div>
+            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
+              <svg class="h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 0a2.25 2.25 0 01-2.25-2.25V6.75a2.25 2.25 0 012.25-2.25h16.5a2.25 2.25 0 012.25 2.25v3.75a2.25 2.25 0 01-2.25 2.25m-16.5 0h16.5m-16.5 0V17.25a2.25 2.25 0 002.25 2.25h16.5a2.25 2.25 0 002.25-2.25v-3.75m-16.5 0a2.25 2.25 0 01-2.25-2.25m16.5-4.5a2.25 2.25 0 012.25 2.25m-16.5 0h16.5" />
+              </svg>
+            </div>
+            <div class="mt-3 text-center sm:mt-5">
+              <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title">Initiate New Workforce Forecast</h3>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500">Fill out the details to create a new workforce forecast model for the upcoming period.</p>
+                <div class="mt-4 text-left">
+                  <label for="forecast-name" class="block text-sm font-medium text-gray-700">Forecast Model Name</label>
+                  <div class="mt-1">
+                    <input type="text" name="forecast-name" id="forecast-name" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="e.g., Q4 2025 Workforce Plan">
+                  </div>
+                </div>
+                <div class="mt-4 text-left">
+                  <label for="forecast-period" class="block text-sm font-medium text-gray-700">Period</label>
+                  <div class="mt-1">
+                    <select id="forecast-period" name="forecast-period" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                      <option>Q4 2025</option>
+                      <option>FY 2026</option>
+                      <option>Next 6 Months</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="mt-4 text-left">
+                  <label for="additional-notes" class="block text-sm font-medium text-gray-700">Additional Notes</label>
+                  <div class="mt-1">
+                    <textarea id="additional-notes" name="additional-notes" rows="3" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Any specific factors to consider..."></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+            <button type="button" class="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:col-start-2 sm:text-sm">Create Forecast</button>
+            <button @click="openForecastModal = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:col-start-1 sm:mt-0 sm:text-sm">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div x-show="openBudgetModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div x-show="openBudgetModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+    
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+    
+        <div x-show="openBudgetModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full sm:p-6">
+          <div>
+            <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                <svg class="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.527 12.92m-3 0a.75.75 0 010-1.5m0 1.5a.75.75 0 000-1.5m0 0H9m1.5 0H12m-2.818 4.711l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.527 12.92m-3 0a.75.75 0 010-1.5m0 1.5a.75.75 0 000-1.5m0 0H9m1.5 0H12" />
+                </svg>
+            </div>
+            <div class="mt-3 text-center sm:mt-5">
+              <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title">Annual HR Budget Details (2025)</h3>
+              <div class="mt-4">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Allocated (TZS)</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Spent (TZS)</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Remaining (TZS)</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilization</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Salaries & Wages</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">120,000,000</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">80,000,000</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">40,000,000</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">67%</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Training & Development</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">15,000,000</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10,000,000</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5,000,000</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">67%</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Recruitment</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10,000,000</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5,000,000</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5,000,000</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">50%</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">General Admin</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5,000,000</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2,500,000</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2,500,000</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">50%</td>
+                            </tr>
+                            <tr class="bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">Total</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">150,000,000</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">97,500,000</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">52,500,000</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">65%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 sm:mt-6">
+            <button @click="openBudgetModal = false" type="button" class="inline-flex w-full justify-center rounded-md border border-transparent bg-gray-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 sm:text-sm">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div x-show="openViewRequisitionModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div x-show="openViewRequisitionModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+    
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+    
+        <div x-show="openViewRequisitionModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+          <div>
+            <div class="mt-3 text-center sm:mt-5">
+              <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title">Job Requisition Details</h3>
+              <div class="mt-2 text-left">
+                <dl class="divide-y divide-gray-200">
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                        <dt class="text-sm font-medium text-gray-500">Position Title</dt>
+                        <dd x-text="selectedRequisition ? selectedRequisition.position_title : ''" class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"></dd>
+                    </div>
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                        <dt class="text-sm font-medium text-gray-500">Department</dt>
+                        <dd x-text="selectedRequisition ? selectedRequisition.department : ''" class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"></dd>
+                    </div>
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                        <dt class="text-sm font-medium text-gray-500">Submitted By</dt>
+                        <dd x-text="selectedRequisition ? selectedRequisition.submitted_by : ''" class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"></dd>
+                    </div>
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                        <dt class="text-sm font-medium text-gray-500">Date Submitted</dt>
+                        <dd x-text="selectedRequisition ? selectedRequisition.created_at : ''" class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"></dd>
+                    </div>
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                        <dt class="text-sm font-medium text-gray-500">Status</dt>
+                        <dd x-text="selectedRequisition ? selectedRequisition.status : ''" class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"></dd>
+                    </div>
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                        <dt class="text-sm font-medium text-gray-500">Justification</dt>
+                        <dd x-text="selectedRequisition ? selectedRequisition.justification : ''" class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"></dd>
+                    </div>
+                </dl>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+            <template x-if="selectedRequisition && selectedRequisition.status === 'pending'">
+                <button type="button" class="inline-flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:col-start-2 sm:text-sm">Approve</button>
+            </template>
+            <template x-if="selectedRequisition && selectedRequisition.status === 'pending'">
+                <button type="button" class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:col-start-1 sm:mt-0 sm:text-sm">Reject</button>
+            </template>
+            <button @click="openViewRequisitionModal = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 sm:col-start-1 sm:mt-0 sm:text-sm">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div x-show="openPolicyUploadModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div x-show="openPolicyUploadModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+    
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+    
+        <div x-show="openPolicyUploadModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+          <div>
+            <div class="mt-3 text-center sm:mt-5">
+              <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title" x-text="selectedPolicy ? 'Edit Policy: ' + selectedPolicy.title : 'Upload New Policy'"></h3>
+              <div class="mt-2 text-left">
+                <form method="post" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <input type="hidden" name="policy_id" x-bind:value="selectedPolicy ? selectedPolicy.id : ''">
+                  <div class="space-y-6">
+                    <div>
+                      <label for="policy-title" class="block text-sm font-medium text-gray-700">Policy Title</label>
+                      <input type="text" id="policy-title" name="policy-title" x-bind:value="selectedPolicy ? selectedPolicy.title : ''" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                    </div>
+                    <div>
+                      <label for="policy-version" class="block text-sm font-medium text-gray-700">Version</label>
+                      <input type="text" id="policy-version" name="policy-version" x-bind:value="selectedPolicy ? selectedPolicy.version : ''" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                    </div>
+                    <div>
+                      <label for="policy-file" class="block text-sm font-medium text-gray-700">Policy Document (PDF)</label>
+                      <div class="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
+                        <div class="space-y-1 text-center">
+                          <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m-4-4h2.5M17 28l4 4m0 0v4m0-4h2.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                          </svg>
+                          <div class="flex text-sm text-gray-600">
+                            <label for="file-upload" class="relative cursor-pointer rounded-md bg-white font-medium text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 hover:text-blue-500">
+                              <span>Upload a file</span>
+                              <input id="file-upload" name="file-upload" type="file" class="sr-only">
+                            </label>
+                            <p class="pl-1">or drag and drop</p>
+                          </div>
+                          <p class="text-xs text-gray-500">PDF up to 10MB</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div x-show="selectedPolicy">
+                      <label for="policy-status" class="block text-sm font-medium text-gray-700">Status</label>
+                      <select id="policy-status" name="policy-status" x-bind:value="selectedPolicy ? selectedPolicy.status : ''" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                        <option value="active">Active</option>
+                        <option value="draft">Draft</option>
+                        <option value="archived">Archived</option>
+                      </select>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+            <button type="submit" class="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:col-start-2 sm:text-sm" x-text="selectedPolicy ? 'Save Changes' : 'Upload Policy'"></button>
+            <button @click="openPolicyUploadModal = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:col-start-1 sm:mt-0 sm:text-sm">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div x-show="openManageCaseModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div x-show="openManageCaseModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+    
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+    
+        <div x-show="openManageCaseModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+          <div>
+            <div class="mt-3 text-center sm:mt-5">
+              <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title" x-text="selectedCase ? 'Manage Case: ' + selectedCase.caseId : 'Manage Case'"></h3>
+              <div class="mt-2 text-left">
+                <dl class="divide-y divide-gray-200">
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                        <dt class="text-sm font-medium text-gray-500">Case ID</dt>
+                        <dd x-text="selectedCase ? selectedCase.id : ''" class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"></dd>
+                    </div>
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                        <dt class="text-sm font-medium text-gray-500">Case Type</dt>
+                        <dd x-text="selectedCase ? selectedCase.type : ''" class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"></dd>
+                    </div>
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                        <dt class="text-sm font-medium text-gray-500">Involved Parties</dt>
+                        <dd x-text="selectedCase ? selectedCase.parties : ''" class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"></dd>
+                    </div>
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                        <dt class="text-sm font-medium text-gray-500">Date Opened</dt>
+                        <dd x-text="selectedCase ? selectedCase.date : ''" class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"></dd>
+                    </div>
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                        <dt class="text-sm font-medium text-gray-500">Status</dt>
+                        <dd x-text="selectedCase ? selectedCase.status : ''" class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0"></dd>
+                    </div>
+                    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                        <dt class="text-sm font-medium text-gray-500">Case Notes</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+                            <textarea id="case-notes" name="case-notes" rows="4" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Add or view case notes here..."></textarea>
+                        </dd>
+                    </div>
+                </dl>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+            <button type="button" class="inline-flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:col-start-2 sm:text-sm">Update Status</button>
+            <button @click="openManageCaseModal = false" type="button" class="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:col-start-1 sm:mt-0 sm:text-sm">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div x-show="openSuccessionPlanModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div x-show="openSuccessionPlanModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+    
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+    
+        <div x-show="openSuccessionPlanModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" class="relative inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+          <div>
+            <div class="mt-3 text-center sm:mt-5">
+              <h3 class="text-lg font-medium leading-6 text-gray-900" id="modal-title" x-text="'Manage Succession Plan for ' + (selectedSuccessionPlan ? selectedSuccessionPlan.role : '')"></h3>
+              <div class="mt-2 text-left">
+                <p class="text-sm text-gray-500">Add, edit, or remove potential successors for this critical role.</p>
+                <div class="mt-4">
+                  <template x-if="selectedSuccessionPlan && selectedSuccessionPlan.successors.length > 0">
+                      <div class="space-y-4">
+                          <template x-for="successor in selectedSuccessionPlan.successors" :key="successor.name">
+                              <div class="flex items-center justify-between p-3 bg-gray-50 rounded-md">
+                                  <div class="flex-1">
+                                      <p class="text-sm font-medium text-gray-900" x-text="successor.name + ' (' + successor.title + ')'"></p>
+                                      <p class="text-xs text-gray-500" x-text="'Readiness: ' + successor.status"></p>
+                                  </div>
+                                  <div class="flex items-center space-x-2">
+                                      <button type="button" class="text-indigo-600 hover:text-indigo-900 text-sm">Edit</button>
+                                      <button type="button" class="text-red-600 hover:text-red-900 text-sm">Remove</button>
+                                  </div>
+                              </div>
+                          </template>
+                      </div>
+                  </template>
+                  <div class="mt-6">
+                    <button type="button" class="w-full inline-flex items-center justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        Add New Successor
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-5 sm:mt-6">
+            <button @click="openSuccessionPlanModal = false" type="button" class="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:text-sm">Done</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+{% endblock %}

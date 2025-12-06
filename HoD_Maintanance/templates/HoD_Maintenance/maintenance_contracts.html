@@ -1,0 +1,126 @@
+{% extends 'HoD_Maintenance/base.html' %}
+
+{% block title %}Maintenance Contracts{% endblock %}
+
+{% block content %}
+
+<!-- ================= 1. CONTRACTS DASHBOARD (Visible by default) ================= -->
+<div id="maintenance-contracts-dashboard">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-4xl font-bold text-gray-800">Maintenance Contracts</h1>
+        <button id="new-contract-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 flex items-center">
+            <span class="material-icons-outlined mr-2">add</span>New Maintenance Contract
+        </button>
+    </div>
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contract ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contract Title</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monthly Value</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <tr class="contract-row-clickable hover:bg-gray-50 cursor-pointer">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600">MC-001</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Global Tech Inc.</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Server & Network Maintenance</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-12-31</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$1,500.00</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ================= 2. CONTRACT DETAIL VIEW (Hidden by default) ================= -->
+<div id="contract-detail-view" class="hidden">
+    <nav aria-label="Breadcrumb" class="text-sm font-medium text-gray-500 mb-6">
+        <ol class="list-none p-0 inline-flex">
+            <li class="flex items-center">
+                <a href="#" id="breadcrumb-contracts" class="hover:text-indigo-600">Maintenance Contracts</a>
+                <span class="material-icons-outlined text-sm mx-2">chevron_right</span>
+            </li>
+            <li aria-current="page" class="text-gray-700">Server & Network Maintenance</li>
+        </ol>
+    </nav>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h4 class="text-lg font-semibold text-gray-800 mb-3">Contract Details</h4>
+            <p class="text-sm"><strong>Period:</strong> 2023-01-01 to 2023-12-31</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h4 class="text-lg font-semibold text-gray-800 mb-3">Financial Summary</h4>
+            <p class="text-sm"><strong>Total Value:</strong> $18,000.00</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h4 class="text-lg font-semibold text-gray-800 mb-3">Covered Assets</h4>
+            <ul class="space-y-2 text-sm list-disc pl-5"><li>Server-01</li></ul>
+        </div>
+    </div>
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-xl font-semibold text-gray-800">Scheduled Site Visits</h3>
+        <!-- Site visits table would go here -->
+    </div>
+</div>
+
+<!-- ======================= POPUP MODAL for New Contract ======================= -->
+<div id="new-contract-popup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl p-8 max-h-full overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">New Maintenance Contract</h2>
+            <button id="close-contract-popup" class="text-gray-400 hover:text-gray-600">
+                <span class="material-icons-outlined">close</span>
+            </button>
+        </div>
+        <div class="space-y-4">
+            <div>
+                <label for="contract-client" class="block text-sm font-medium text-gray-700">Client</label>
+                <select id="contract-client" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></select>
+            </div>
+            <div>
+                <label for="contract-title" class="block text-sm font-medium text-gray-700">Contract Title</label>
+                <input type="text" id="contract-title" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="contract-start-date" class="block text-sm font-medium text-gray-700">Start Date</label>
+                    <input type="date" id="contract-start-date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                </div>
+                <div>
+                    <label for="contract-end-date" class="block text-sm font-medium text-gray-700">End Date</label>
+                    <input type="date" id="contract-end-date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="contract-value" class="block text-sm font-medium text-gray-700">Contract Value</label>
+                    <input type="number" id="contract-value" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                </div>
+                <div>
+                    <label for="contract-billing-cycle" class="block text-sm font-medium text-gray-700">Billing Cycle</label>
+                    <select id="contract-billing-cycle" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <option>Monthly</option><option>Quarterly</option><option>Annually</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Covered Assets</label>
+                <div class="mt-2 p-2 border border-gray-300 rounded-md h-32 overflow-y-auto">
+                    <!-- Checkboxes would be dynamically added here -->
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-end space-x-4 mt-8">
+            <button id="cancel-contract-creation" class="bg-white text-gray-700 border border-gray-300 font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-gray-50">Cancel</button>
+            <button class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">Save Contract</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

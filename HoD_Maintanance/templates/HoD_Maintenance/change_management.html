@@ -1,0 +1,126 @@
+{% extends 'HoD_Maintenance/base.html' %}
+
+{% block title %}Change Management{% endblock %}
+
+{% block content %}
+
+<!-- ================== 1. CHANGE REQUESTS DASHBOARD (Visible by default) ================== -->
+<div id="changes-dashboard">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-4xl font-bold text-gray-800">Change Requests</h1>
+        <button id="new-change-request-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 flex items-center">
+            <span class="material-icons-outlined mr-2">add</span>New Change Request
+        </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex items-center space-x-4 mb-6">
+        <div class="relative flex-grow">
+            <span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+            <input type="text" placeholder="Search by ID or subject..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full"/>
+        </div>
+        <!-- Other filters can be added here -->
+    </div>
+
+    <!-- Change Requests Table -->
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Change ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requester</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Planned Start</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">CR-00123</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Server Patching - Week 45</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">John Doe</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">High</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending Approval</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-11-10 10:00 PM</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- ================== 2. NEW CHANGE REQUEST FORM (Hidden by default) ================== -->
+<div id="new-change-view" class="hidden">
+    <nav aria-label="Breadcrumb" class="text-sm font-medium text-gray-500 mb-6">
+        <ol class="list-none p-0 inline-flex">
+            <li class="flex items-center">
+                <a href="#" class="hover:text-indigo-600">Change Management</a>
+                <span class="material-icons-outlined text-sm mx-2">chevron_right</span>
+            </li>
+            <li aria-current="page" class="text-gray-700">New Change Request</li>
+        </ol>
+    </nav>
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">New Change Request</h2>
+
+    <!-- Form Sections -->
+    <div class="space-y-6">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">Core Details</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label for="change-title" class="block text-sm font-medium text-gray-700">Change Title</label>
+                    <input type="text" id="change-title" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                </div>
+                <div>
+                    <label for="change-priority" class="block text-sm font-medium text-gray-700">Priority</label>
+                    <select id="change-priority" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="change-category" class="block text-sm font-medium text-gray-700">Category</label>
+                    <select id="change-category" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <option>Software Update</option><option>Hardware Replacement</option><option>Network Configuration</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">Description & Justification</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="change-description" class="block text-sm font-medium text-gray-700">Description of Change</label>
+                    <textarea id="change-description" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+                </div>
+                <div>
+                    <label for="change-reason" class="block text-sm font-medium text-gray-700">Reason for Change</label>
+                    <textarea id="change-reason" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">Planning</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="change-start-date" class="block text-sm font-medium text-gray-700">Planned Start Date & Time</label>
+                    <input type="datetime-local" id="change-start-date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                </div>
+                <div>
+                    <label for="change-end-date" class="block text-sm font-medium text-gray-700">Planned End Date & Time</label>
+                    <input type="datetime-local" id="change-end-date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="flex justify-end space-x-4 mt-6">
+        <button id="cancel-change-creation" class="bg-white text-gray-700 border border-gray-300 font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-gray-50">Cancel</button>
+        <button id="submit-change-request" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">Submit for Approval</button>
+    </div>
+</div>
+
+{% endblock %}

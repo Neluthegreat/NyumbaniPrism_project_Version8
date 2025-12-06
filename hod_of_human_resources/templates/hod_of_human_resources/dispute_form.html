@@ -1,0 +1,12 @@
+{% extends "hod_of_human_resources/base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Dispute</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+</div>
+{% endblock %}

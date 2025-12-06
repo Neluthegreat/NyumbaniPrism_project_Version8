@@ -1,0 +1,72 @@
+{% extends 'HoD_Development/base.html' %}
+
+{% block title %}Technical Asset Catalog{% endblock %}
+
+{% block content %}
+<div id="technical-asset-catalog-view">
+    <header class="mb-8">
+        <nav class="text-sm font-medium text-gray-500 mb-2">
+            <a class="text-blue-600 hover:underline" href="{% url 'HoD_Development:store_inventory' %}">Store &amp; Inventory</a>
+            <span class="mx-2">&gt;</span>
+            <span class="text-gray-700">Technical Asset Catalog</span>
+        </nav>
+        <h1 class="text-3xl font-bold text-gray-900">Technical Asset Catalog</h1>
+    </header>
+    <div class="flex gap-8">
+        <aside class="w-1/4">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
+                <!-- Full filter content from original HTML goes here -->
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Category</h4>
+                        <div class="space-y-2">
+                            <label class="flex items-center"><input class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" type="checkbox"/><span class="ml-2 text-gray-700">Software</span></label>
+                            <label class="flex items-center"><input class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" type="checkbox"/><span class="ml-2 text-gray-700">Hardware</span></label>
+                            <label class="flex items-center"><input class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" type="checkbox"/><span class="ml-2 text-gray-700">Cloud Services</span></label>
+                        </div>
+                    </div>
+                    <!-- ... other filter sections ... -->
+                </div>
+            </div>
+        </aside>
+        <div class="w-3/4">
+            <div class="relative mb-6">
+                <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+                <input class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Search for an asset..." type="text"/>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Asset Card 1 -->
+                <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer flex flex-col" onclick="window.location.href='{% url 'HoD_Development:detailed_asset_view' %}'">
+                    <div class="p-4 flex-grow">
+                        <div class="flex justify-center mb-4">
+                            <img alt="IntelliJ IDEA Logo" class="h-24 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9x35BWAJZxlperICy-hoC_vOZAIJM6NgjODTf80D6GMB_nZYx4prcwh0Zf8asFx-W4IfZrMJD-vZOygPOfttUzKAR2dcjX6Galp8zi5BX3pcEu-rM9zT8kAxwmrwJAadxnbRDWoW7dBr4RDVWjH-KdINL6rqXJBtzWoAI-opT-qLhwjFX3t09FFOZiOZcNxnPFXiRs87qViumCfuh_wk9_NH36bmbd3qCb8KXNrYP4i1Jn1uoIsWfLD3pPNYS1JLsE9oUDEEgDW8"/>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-800">JetBrains IntelliJ IDEA Ultimate</h3>
+                        <p class="text-sm text-gray-500 mt-1">Software</p>
+                        <p class="text-sm text-green-600 font-semibold mt-3">15 Licenses Available</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-b-lg border-t">
+                        <p class="text-lg font-semibold text-gray-900">$499/year per user</p>
+                    </div>
+                </div>
+                <!-- Other Asset Cards -->
+                <!-- Make sure to wrap any other asset cards with an onclick that points to the correct url -->
+                <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer flex flex-col">
+                    <div class="p-4 flex-grow">
+                        <div class="flex justify-center mb-4">
+                            <img alt="MacBook Pro" class="h-24 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqa8EndXbEr03kjpHKuyAmFrpc4LH2UCARviJcOdm5DHWhWgWiB8oLZovRY2iteGqhH_zrsoZ_UMA-BlnUprC-1GjbP6oef8o8iu3wKJsKQAZ3jUz488sc1Ymsd5tsYVRk65HumwtfBPn2do4CGlSvwwgQAoxdOuPOvo9FAMj3RZWx49zRN3n-rDHP444azoRMzl6bNk0lXnvydzq5YH5nhnNUpfYMwif7jdt6an_ybALx4sx01U28DNziwyRvEnJ2zpAA6DfVvHo"/>
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-800">MacBook Pro 16" (M3 Max)</h3>
+                        <p class="text-sm text-gray-500 mt-1">Hardware</p>
+                        <p class="text-sm text-green-600 font-semibold mt-3">8 Units Available</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-b-lg border-t">
+                        <p class="text-lg font-semibold text-gray-900">$3,499</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

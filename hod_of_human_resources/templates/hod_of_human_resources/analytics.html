@@ -1,0 +1,228 @@
+{% extends 'hod_of_human_resources/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load hr_filters %}
+
+{% block title %}Analytics & Reporting - PRISM HR{% endblock %}
+{% block active_view %}analytics{% endblock %}
+
+{% block content %}
+<!-- Analytics View -->
+<div x-show="activeView === 'analytics'" x-cloak>
+    <div class="container-fluid">
+        <header class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">HR Analytics & Reporting</h1>
+                <p class="text-gray-500 mt-1">Key metrics for the Head of Human Resources.</p>
+            </div>
+            <div class="btn-group" role="group" aria-label="Date Range">
+                <button type="button" class="btn btn-outline-primary active">Quarterly</button>
+                <button type="button" class="btn btn-outline-primary">Monthly</button>
+                <button type="button" class="btn btn-outline-primary">Annually</button>
+            </div>
+        </header>
+
+        <!-- KPI Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm border-light">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <i class="bi bi-people-fill fs-2 text-primary"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="card-title text-secondary mb-1">Turnover Rate</h5>
+                                <p class="card-text fs-4 fw-bold">{{ turnover_rate }}%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm border-light">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <i class="bi bi-stopwatch-fill fs-2" style="color: #6f42c1;"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="card-title text-secondary mb-1">Avg. Time to Hire</h5>
+                                <p class="card-text fs-4 fw-bold">{{ avg_hire_time }} Days</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm border-light">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <i class="bi bi-emoji-smile-fill fs-2 text-success"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="card-title text-secondary mb-1">Satisfaction Score</h5>
+                                <p class="card-text fs-4 fw-bold">{{ satisfaction_score }}/10</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm border-light">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <i class="bi bi-shield-fill-check fs-2 text-warning"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="card-title text-secondary mb-1">Compliance</h5>
+                                <p class="card-text fs-4 fw-bold">{{ compliance_rate }}%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-7">
+                <div class="card h-100 shadow-sm border-light">
+                    <div class="card-body">
+                        <h5 class="card-title">Headcount by Department</h5>
+                        <p class="card-subtitle mb-2 text-muted">Total Employees: {{ department_headcount|length }}</p>
+                        <div class="w-100">
+                            {% for dept, count in department_headcount.items %}
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>{{ dept }}</span>
+                                    <span>{{ count }}</span>
+                                </div>
+                                <div class="progress" style="height: 20px;">
+                                    <div class="progress-bar" role="progressbar" style="width: {{ count|calculate_percentage:department_headcount }}%;" aria-valuenow="{{ count|calculate_percentage:department_headcount }}" aria-valuemin="0" aria-valuemax="100">{{ count|calculate_percentage:department_headcount }}%</div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card h-100 shadow-sm border-light">
+                    <div class="card-body">
+                        <h5 class="card-title">HR Budget Utilization</h5>
+                        <p class="card-subtitle mb-2 text-muted">Annual Budget: TZS {{ annual_budget|floatformat:0|intcomma }}/=</p>
+                        <div class="w-100 text-center p-4">
+                            <p class="fs-1 fw-bold text-success">{{ budget_utilization }}%</p>
+                            <p class="fs-5">Utilized</p>
+                        </div>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ budget_utilization }}%" aria-valuenow="{{ budget_utilization }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <span>TZS {{ utilized_budget|floatformat:0|intcomma }}/=</span>
+                            <span>TZS {{ annual_budget|floatformat:0|intcomma }}/=</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tables with detailed data -->
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-light">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">Recruitment Pipeline</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">Position</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Hiring Manager</th>
+                                    <th scope="col">Days Open</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Senior Systems Developer</td>
+                                    <td><span class="badge bg-warning text-dark">CEO Sign-off</span></td>
+                                    <td>HOD - Systems</td>
+                                    <td>3</td>
+                                </tr>
+                                <tr>
+                                    <td>Junior Graphic Designer</td>
+                                    <td><span class="badge bg-primary">HR Approval</span></td>
+                                    <td>HOD - Graphics</td>
+                                    <td>5</td>
+                                </tr>
+                                <tr>
+                                    <td>Network Maintenance Intern</td>
+                                    <td><span class="badge bg-primary">HR Approval</span></td>
+                                    <td>HOD - Maintenance</td>
+                                    <td>7</td>
+                                </tr>
+                                <tr>
+                                    <td>Marketing Specialist</td>
+                                    <td><span class="badge bg-info">Interviewing</span></td>
+                                    <td>HOD - Marketing</td>
+                                    <td>15</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card shadow-sm border-light">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0">High Priority Cases & Alerts</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">Case / Alert ID</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>CASE-0012</td>
+                                    <td>Dispute</td>
+                                    <td><span class="badge bg-danger">Awaiting Arbitration</span></td>
+                                    <td><a href="#" class="btn btn-sm btn-outline-secondary">Manage</a></td>
+                                </tr>
+                                <tr>
+                                    <td>CERT-EXP-045</td>
+                                    <td>Compliance</td>
+                                    <td><span class="badge bg-warning text-dark">Expires in 15d</span></td>
+                                    <td><a href="#" class="btn btn-sm btn-outline-secondary">Notify</a></td>
+                                </tr>
+                                <tr>
+                                    <td>CASE-0011</td>
+                                    <td>Payroll Claim</td>
+                                    <td><span class="badge bg-info">Investigation</span></td>
+                                    <td><a href="#" class="btn btn-sm btn-outline-secondary">View</a></td>
+                                </tr>
+                                <tr>
+                                    <td>CERT-EXP-048</td>
+                                    <td>Compliance</td>
+                                    <td><span class="badge bg-warning text-dark">Expires in 28d</span></td>
+                                    <td><a href="#" class="btn btn-sm btn-outline-secondary">Notify</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

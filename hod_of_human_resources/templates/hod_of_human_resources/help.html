@@ -1,0 +1,134 @@
+{% extends 'hod_of_human_resources/base.html' %}
+{% load static %}
+
+{% block title %}Help & Support - PRISM HR{% endblock %}
+{% block active_view %}help{% endblock %}
+
+{% block content %}
+<!-- Help & Support View -->
+<div x-show="activeView === 'help'" x-cloak>
+    <div class="container-fluid">
+        <header class="mb-4">
+            <h1 class="text-3xl font-bold text-gray-800">Help & Support</h1>
+            <p class="text-gray-500 mt-1">Get assistance with PRISM HR system features and troubleshooting.</p>
+        </header>
+
+        <div class="row">
+            <!-- FAQ Section -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-light">
+                    <div class="card-header">
+                        <h5 class="mb-0">Frequently Asked Questions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="accordion" id="faqAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingOne">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                        How do I create a new job requisition?
+                                    </button>
+                                </h2>
+                                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        <p>To create a new job requisition:</p>
+                                        <ol>
+                                            <li>Navigate to HR Management → Job Requisitions</li>
+                                            <li>Click "Create New Requisition"</li>
+                                            <li>Fill in all required fields including job title, department, and requirements</li>
+                                            <li>Submit for approval</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                        How do I update employee information?
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        <p>Employee information can be updated through the HR Management module:</p>
+                                        <ol>
+                                            <li>Go to HR Management → Workforce</li>
+                                            <li>Search for the employee</li>
+                                            <li>Click "Edit" next to their profile</li>
+                                            <li>Update the necessary information</li>
+                                            <li>Save changes</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingThree">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                                        How do I generate reports?
+                                    </button>
+                                </h2>
+                                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        <p>Reports can be generated from the Analytics section:</p>
+                                        <ol>
+                                            <li>Navigate to Analytics</li>
+                                            <li>Select the type of report you need</li>
+                                            <li>Choose date range and filters</li>
+                                            <li>Click "Generate Report"</li>
+                                            <li>Download or view the report</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Support Section -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm border-light">
+                    <div class="card-header">
+                        <h5 class="mb-0">Contact Support</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h6>Email Support</h6>
+                            <p class="text-muted">Send us an email and we'll get back to you within 24 hours.</p>
+                            <a href="mailto:support@prismcorp.tz" class="btn btn-primary btn-sm">Email Support</a>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6>Phone Support</h6>
+                            <p class="text-muted">Available Monday to Friday, 9:00 AM - 5:00 PM</p>
+                            <p><strong>+255 784 123 456</strong></p>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6>System Status</h6>
+                            <p class="text-success mb-0">
+                                <i class="fas fa-check-circle"></i> All systems operational
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="card shadow-sm border-light mt-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">Quick Links</h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li><a href="{% url 'hod_of_human_resources:hod_dashboard' %}" class="text-decoration-none">Dashboard</a></li>
+                            <li><a href="{% url 'hod_of_human_resources:hr_management' %}" class="text-decoration-none">HR Management</a></li>
+                            <li><a href="{% url 'hod_of_human_resources:analytics' %}" class="text-decoration-none">Analytics</a></li>
+                            <li><a href="{% url 'hod_of_human_resources:settings' %}" class="text-decoration-none">Settings</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

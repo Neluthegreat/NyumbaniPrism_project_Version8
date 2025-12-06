@@ -1,0 +1,180 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}PRISM - Head of Human Resources Dashboard{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style type="text/tailwindcss">
+        :root {
+            --sidebar-bg: #FFFFFF;
+            --sidebar-text: #4B5563;
+            --sidebar-hover-bg: #F3F4F6;
+            --sidebar-active-bg: #E5E7EB;
+            --sidebar-icon: #6B7280;
+            --sidebar-icon-active: #1F2937;
+            --primary-accent: #3B82F6;
+            --content-bg: #F9FAFB;
+            --content-text: #111827;
+            --border-color: #E5E7EB;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--content-bg);
+        }
+        .sidebar {
+            width: 64px;
+            transition: width 0.3s ease-in-out;
+            border-right: 1px solid var(--border-color);
+        }
+        .sidebar:hover {
+            width: 288px;
+        }
+        .sidebar .nav-text {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            transform: translateX(-10px);
+        }
+        .sidebar:hover .nav-text {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .sidebar .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+        .sidebar .group[data-open="true"] .submenu {
+            max-height: 500px;
+        }
+        .sidebar .group[data-open="true"] .chevron {
+             transform: rotate(90deg);
+        }
+        .sidebar .chevron {
+            transition: transform 0.3s ease-in-out;
+        }
+        [x-cloak] { display: none !important; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50 text-gray-900" x-data="{ activeView: '{% block active_view %}dashboard{% endblock %}', activeHrTab: '{% block active_hr_tab %}policy{% endblock %}', openSubmenu: '' }" x-init="
+    if (['hrManagement'].includes(activeView)) openSubmenu = 'hr';
+    if (['financials', 'payment'].includes(activeView)) openSubmenu = 'financials';
+">
+    <div class="flex min-h-screen">
+        <!-- Persistent Sidebar Navigation -->
+        <nav class="sidebar bg-[var(--sidebar-bg)] text-[var(--sidebar-text)] flex flex-col justify-between p-2 z-50">
+            <div class="flex flex-col space-y-2 flex-grow h-0 overflow-y-auto">
+                <div class="flex items-center space-x-4 p-2 mb-4 overflow-hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 text-[var(--primary-accent)]">
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                        <path d="m12 2-3.46 6L12 14l3.46-6L12 2Z"></path>
+                    </svg>
+                    <span class="nav-text font-bold text-xl whitespace-nowrap text-gray-800">PRISM</span>
+                </div>
+
+                <a href="{% url 'hod_of_human_resources:hod_dashboard' %}" class="flex items-center space-x-4 p-3 rounded-lg" :class="activeView === 'dashboard' ? 'bg-[var(--sidebar-active-bg)] text-[var(--sidebar-icon-active)]' : 'hover:bg-[var(--sidebar-hover-bg)] text-[var(--sidebar-icon)] hover:text-gray-800'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <span class="nav-text font-medium whitespace-nowrap">Dashboard</span>
+                </a>
+
+                <!-- HR Management Module -->
+                <div class="group" :data-open="openSubmenu === 'hr'">
+                    <a href="#" @click.prevent="openSubmenu = (openSubmenu === 'hr' ? '' : 'hr')" class="w-full flex items-center justify-between p-3 rounded-lg" :class="['hrManagement'].includes(activeView) ? 'bg-gray-100 text-gray-800' : 'hover:bg-[var(--sidebar-hover-bg)] text-[var(--sidebar-icon)] hover:text-gray-800'">
+                        <div class="flex items-center space-x-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            <span class="nav-text font-medium whitespace-nowrap">HR Management</span>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron nav-text flex-shrink-0">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+                    <div class="submenu ml-6">
+                        <a href="{% url 'hod_of_human_resources:hr_management' %}?tab=workforce" class="flex items-center space-x-4 p-2 rounded-md mt-1 overflow-hidden" :class="activeView === 'hrManagement' && activeHrTab === 'workforce' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-500 hover:text-gray-800'"><span class="nav-text text-sm whitespace-nowrap">Workforce Planning</span></a>
+                        <a href="{% url 'hod_of_human_resources:hr_management' %}?tab=requisition" class="flex items-center space-x-4 p-2 rounded-md mt-1 overflow-hidden" :class="activeView === 'hrManagement' && activeHrTab === 'requisition' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-500 hover:text-gray-800'"><span class="nav-text text-sm whitespace-nowrap">Requisition Approval</span></a>
+                        <a href="{% url 'hod_of_human_resources:hr_management' %}?tab=policy" class="flex items-center space-x-4 p-2 rounded-md mt-1 overflow-hidden" :class="activeView === 'hrManagement' && activeHrTab === 'policy' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-500 hover:text-gray-800'"><span class="nav-text text-sm whitespace-nowrap">Policy Management</span></a>
+                        <a href="{% url 'hod_of_human_resources:hr_management' %}?tab=dispute" class="flex items-center space-x-4 p-2 rounded-md mt-1 overflow-hidden" :class="activeView === 'hrManagement' && activeHrTab === 'dispute' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-500 hover:text-gray-800'"><span class="nav-text text-sm whitespace-nowrap">Dispute Resolution</span></a>
+                        <a href="{% url 'hod_of_human_resources:hr_management' %}?tab=succession" class="flex items-center space-x-4 p-2 rounded-md mt-1 overflow-hidden" :class="activeView === 'hrManagement' && activeHrTab === 'succession' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-500 hover:text-gray-800'"><span class="nav-text text-sm whitespace-nowrap">Succession Planning</span></a>
+                        <a href="{% url 'hod_of_human_resources:meeting_list' %}" class="flex items-center space-x-4 p-2 rounded-md mt-1 overflow-hidden" :class="activeView === 'meeting' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-500 hover:text-gray-800'"><span class="nav-text text-sm whitespace-nowrap">Meetings</span></a>
+                    </div>
+                </div>
+
+                <!-- Analytics & Reporting Module -->
+                <a href="{% url 'hod_of_human_resources:analytics' %}" class="flex items-center space-x-4 p-3 rounded-lg" :class="activeView === 'analytics' ? 'bg-[var(--sidebar-active-bg)] text-[var(--sidebar-icon-active)]' : 'hover:bg-[var(--sidebar-hover-bg)] text-[var(--sidebar-icon)] hover:text-gray-800'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+                        <path d="M3 3v18h18"></path>
+                        <path d="m19 9-5 5-4-4-3 3"></path>
+                    </svg>
+                    <span class="nav-text font-medium whitespace-nowrap">Analytics & Reporting</span>
+                </a>
+
+                <!-- Financials Module -->
+                <div class="group" :data-open="openSubmenu === 'financials'">
+                    <a href="#" @click.prevent="openSubmenu = (openSubmenu === 'financials' ? '' : 'financials')" class="w-full flex items-center justify-between p-3 rounded-lg" :class="['financials', 'payment'].includes(activeView) ? 'bg-gray-100 text-gray-800' : 'hover:bg-[var(--sidebar-hover-bg)] text-[var(--sidebar-icon)] hover:text-gray-800'">
+                        <div class="flex items-center space-x-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+                                <line x1="12" x2="12" y1="2" y2="22"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                            <span class="nav-text font-medium whitespace-nowrap">Financials</span>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron nav-text flex-shrink-0">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+                    <div class="submenu ml-6">
+                        <a href="{% url 'hod_of_human_resources:financials' %}" class="flex items-center space-x-4 p-2 rounded-md mt-1 overflow-hidden" :class="activeView === 'financials' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-500 hover:text-gray-800'"><span class="nav-text text-sm whitespace-nowrap">Budget Overview</span></a>
+                        <a href="{% url 'hod_of_human_resources:payment_page' %}" class="flex items-center space-x-4 p-2 rounded-md mt-1 overflow-hidden" :class="activeView === 'payment' ? 'bg-blue-100 text-blue-700 font-semibold' : 'hover:bg-gray-100 text-gray-500 hover:text-gray-800'"><span class="nav-text text-sm whitespace-nowrap">Process Payments</span></a>
+                    </div>
+                </div>
+
+                <!-- System Settings Module -->
+                <a href="{% url 'hod_of_human_resources:settings' %}" class="flex items-center space-x-4 p-3 rounded-lg" :class="activeView === 'settings' ? 'bg-[var(--sidebar-active-bg)] text-[var(--sidebar-icon-active)]' : 'hover:bg-[var(--sidebar-hover-bg)] text-[var(--sidebar-icon)] hover:text-gray-800'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 0 2l-.15.08a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1 0-2l.15-.08a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <span class="nav-text font-medium whitespace-nowrap">System Settings</span>
+                </a>
+            </div>
+            <div class="flex flex-col space-y-2">
+                <!-- Help and Support-->
+                <a href="{% url 'hod_of_human_resources:help' %}" class="flex items-center space-x-4 p-3 rounded-lg" :class="activeView === 'help' ? 'bg-[var(--sidebar-active-bg)] text-[var(--sidebar-icon-active)]' : 'hover:bg-[var(--sidebar-hover-bg)] text-[var(--sidebar-icon)] hover:text-gray-800'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <path d="M12 17h.01"></path>
+                    </svg>
+                    <span class="nav-text font-medium whitespace-nowrap">Help & Support</span>
+                </a>
+            </div>
+        </nav>
+        
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col">
+            {% include 'hod_of_human_resources/_profile_header.html' %}
+            <main class="p-8 w-full flex-1 bg-gray-50 overflow-y-auto">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

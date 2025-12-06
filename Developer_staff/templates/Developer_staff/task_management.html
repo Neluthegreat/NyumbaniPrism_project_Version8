@@ -1,0 +1,102 @@
+{% extends 'Developer_staff/base_developer.html' %}
+
+{% block title %}Task Management{% endblock %}
+
+{% block content %}
+
+<div id="task-management-view">
+    <h1 class="text-4xl font-bold text-gray-800">Task Management</h1>
+    <p class="mt-2 text-gray-600">Review and manage your assigned tasks.</p>
+    
+    <div class="mt-8">
+        <!-- The Tabs for 'My Tasks' and 'Departmental Tasks' can be added back later if needed -->
+        <!-- <div class="border-b border-gray-200"> ... </div> -->
+
+        <div class="py-5 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <!-- Filtering controls can be made functional later -->
+                <div class="relative">
+                    <select class="pl-3 pr-10 py-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <option>Filter by Project</option>
+                        <option>Project Alpha</option>
+                        <option>Project Beta</option>
+                        <option>Project Gamma</option>
+                    </select>
+                </div>
+                <div class="relative">
+                    <select class="pl-3 pr-10 py-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <option>Filter by Status</option>
+                        <option>All</option>
+                        <option>To Do</option>
+                        <option>In Progress</option>
+                        <option>In Review</option>
+                        <option>Done</option>
+                    </select>
+                </div>
+            </div>
+            <button class="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                <span class="material-icons-sharp mr-2 -ml-1">add</span>
+                New Task
+            </button>
+        </div>
+
+        <!-- Task List -->
+        <div class="space-y-4">
+            {% if tasks %}
+                {% for task in tasks %}
+                <div class="bg-white p-4 rounded-lg shadow-sm border border-transparent hover:border-blue-500 cursor-pointer">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-bold text-gray-800 {% if task.status == 'DONE' %}line-through{% endif %}">{{ task.title }}</p>
+                            <p class="text-sm text-gray-500 mt-1">Project: {{ task.project.name }}</p>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <!-- Dynamic Status Badge -->
+                            {% if task.status == 'TODO' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">To Do</span>
+                            {% elif task.status == 'IN_PROGRESS' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">In Progress</span>
+                            {% elif task.status == 'IN_REVIEW' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">In Review</span>
+                            {% elif task.status == 'DONE' %}
+                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Done</span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{{ task.get_status_display }}</span>
+                            {% endif %}
+
+                            <!-- Dynamic Priority Icon -->
+                            {% if task.priority == 'HIGH' %}
+                                <span class="material-icons-sharp text-red-500" title="High Priority">signal_cellular_alt</span>
+                            {% elif task.priority == 'MEDIUM' %}
+                                <span class="material-icons-sharp text-yellow-500" title="Medium Priority">signal_cellular_alt_2_bar</span>
+                            {% else %}
+                                <span class="material-icons-sharp text-green-500" title="Low Priority">signal_cellular_alt_1_bar</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center mt-3">
+                        {% if task.due_date %}
+                            <p class="text-sm text-gray-600">Due: <span class="font-medium">{{ task.due_date|date:"Y-m-d" }}</span></p>
+                        {% endif %}
+                        
+                        {% if task.assignee %}
+                        <div class="flex -space-x-2 overflow-hidden">
+                            <!-- This can be replaced with a profile picture later -->
+                            <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500 ring-2 ring-white" title="{{ task.assignee.username }}">
+                                <span class="text-sm font-medium leading-none text-white">{{ task.assignee.username|first|upper }}</span>
+                            </span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="bg-white p-6 rounded-lg shadow-sm text-center">
+                    <p class="text-gray-500">You have no tasks assigned to you.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

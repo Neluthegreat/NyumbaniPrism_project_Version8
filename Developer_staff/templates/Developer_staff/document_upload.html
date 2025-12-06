@@ -1,0 +1,53 @@
+{% extends 'Developer_staff/base_developer.html' %}
+
+{% block title %}Upload Document{% endblock %}
+
+{% block content %}
+
+<div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-800">Upload a New Document</h1>
+    <p class="mt-2 text-gray-600">Select a file and provide the necessary details.</p>
+
+    <form method="POST" enctype="multipart/form-data" class="mt-8 bg-white p-8 rounded-lg shadow-sm space-y-6">
+        {% csrf_token %}
+
+        <div>
+            <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-gray-700">Document Name</label>
+            {{ form.name }}
+        </div>
+        
+        <div>
+            <label for="{{ form.project.id_for_label }}" class="block text-sm font-medium text-gray-700">Project</label>
+            {{ form.project }}
+        </div>
+
+        <div>
+            <label for="{{ form.file.id_for_label }}" class="block text-sm font-medium text-gray-700">File</label>
+            {{ form.file }}
+        </div>
+
+        <div>
+            <label for="{{ form.version.id_for_label }}" class="block text-sm font-medium text-gray-700">Version</label>
+            {{ form.version }}
+        </div>
+
+        <!-- Display form errors if any -->
+        {% if form.errors %}
+            <div class="p-4 bg-red-50 text-red-700 rounded-lg">
+                <p>Please correct the errors below:</p>
+                {{ form.errors }}
+            </div>
+        {% endif %}
+
+        <div class="pt-4 flex justify-end space-x-3">
+            <a href="{% url 'Developer_staff:documentation' %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">
+                Cancel
+            </a>
+            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                Upload Document
+            </button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

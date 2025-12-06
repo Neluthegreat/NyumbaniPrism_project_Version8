@@ -1,0 +1,130 @@
+{% extends 'memberofmaintenance/base.html' %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold">Service Management: All Tickets</h1>
+    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700">
+        <span class="material-icons">add</span>
+        <span>New Ticket</span>
+    </button>
+</div>
+
+<!-- Filters Section -->
+<div class="bg-white p-4 rounded-lg shadow mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="relative col-span-1 md:col-span-2 lg:col-span-2">
+            <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+            <input class="pl-10 pr-4 py-2 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search by keyword, ticket ID, or asset..." type="text" />
+        </div>
+        <div>
+            <select class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option>Status: All</option>
+                <option>Open</option>
+                <option>In Progress</option>
+                <option>On Hold</option>
+                <option>Resolved</option>
+                <option>Closed</option>
+            </select>
+        </div>
+        <div>
+            <select class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option>Priority: All</option>
+                <option>Low</option>
+                <option>Medium</option>
+                <option>High</option>
+                <option>Critical</option>
+            </select>
+        </div>
+        <div>
+            <select class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option>Sort By: Newest</option>
+                <option>Oldest</option>
+                <option>Priority (High to Low)</option>
+                <option>Priority (Low to High)</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<!-- Tickets Table -->
+<div class="bg-white rounded-lg shadow overflow-x-auto">
+    <table class="min-w-full">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ticket ID</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reported By</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Created</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+            
+            <!-- 
+              DJANGO FOR LOOP - LATER
+              When you pass a list of tickets from your view (e.g., context = {'tickets': all_tickets}),
+              you will replace the static rows below with a loop like this:
+
+              {% for ticket in tickets %}
+                <tr class="hover:bg-gray-50 cursor-pointer">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ ticket.id }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{{ ticket.subject }}</td>
+                    ... and so on for each field ...
+                </tr>
+              {% endfor %}
+            -->
+
+            <!-- Example Row 1 -->
+            <tr class="hover:bg-gray-50 cursor-pointer">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#TICK-00123</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">Printer Down in Publishing</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Printer HP Indigo 7900</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">John Doe</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-10-27 10:30 AM</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                        Critical
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Open</td>
+            </tr>
+
+            <!-- Example Row 2 -->
+            <tr class="hover:bg-gray-50 cursor-pointer">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#TICK-00124</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">Network Connectivity Issues</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Cisco Catalyst 9300</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Jane Smith</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-10-27 09:15 AM</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">
+                        High
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">In Progress</td>
+            </tr>
+
+            <!-- Example Row 3 -->
+            <tr class="hover:bg-gray-50 cursor-pointer">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#TICK-00125</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">Software installation request</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Dev Laptop - Dell XPS 15</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Charlie Davis</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2023-10-26 04:00 PM</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                        Medium
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Resolved</td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

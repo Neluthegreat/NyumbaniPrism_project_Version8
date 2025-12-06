@@ -1,0 +1,22 @@
+{% extends "hod_of_human_resources/base.html" %}
+
+{% block title %}Confirm Delete{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">Confirm Delete</h1>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Are you sure you want to delete "{{ meeting.title }}"?</h6>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <p>This action cannot be undone.</p>
+                <button type="submit" class="btn btn-danger">Delete</button>
+                <a href="{% url 'hod_of_human_resources:meeting_list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

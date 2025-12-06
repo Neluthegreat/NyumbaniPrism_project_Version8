@@ -1,0 +1,65 @@
+{% extends 'HoD_Maintenance/base.html' %}
+
+{% block title %}Maintenance History{% endblock %}
+
+{% block content %}
+
+<!-- Maintenance History View -->
+<div id="maintenance-history-view">
+    <!-- Breadcrumbs -->
+    <nav aria-label="Breadcrumb" class="text-sm font-medium text-gray-500 mb-6">
+        <ol class="list-none p-0 inline-flex">
+            <li class="flex items-center">
+                <span class="text-gray-500">Store & Inventory</span>
+                <span class="material-icons-outlined text-sm mx-2">chevron_right</span>
+            </li>
+            <li class="flex items-center">
+                <a href="{% url 'asset-management' %}" class="hover:text-indigo-600">Asset Management</a>
+                <span class="material-icons-outlined text-sm mx-2">chevron_right</span>
+            </li>
+            <li class="flex items-center">
+                <a href="#" class="hover:text-indigo-600">MacBook Pro 16"</a>
+                <span class="material-icons-outlined text-sm mx-2">chevron_right</span>
+            </li>
+            <li aria-current="page" class="text-gray-700">Maintenance History</li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">Maintenance History for MacBook Pro 16" (ASSET-001)</h1>
+        <!-- Added a unique ID to this button -->
+        <button id="schedule-new-maintenance-btn" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 flex items-center">
+            <span class="material-icons-outlined mr-2">add</span>Schedule New Maintenance
+        </button>
+    </div>
+
+    <!-- Maintenance History Table -->
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ticket ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issue Reported</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Service</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Technician</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <tr>
+                    <td class="px-6 py-4 text-sm font-medium text-indigo-600 hover:underline"><a href="#">TKT-00098</a></td>
+                    <td class="px-6 py-4 text-sm text-gray-500">Screen flickering issue</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">2023-08-12</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">John Doe</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">$75.00</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- We need to include the "New Ticket" popup here so the JavaScript can find it -->
+{% include 'HoD_Maintenance/popups/new_ticket_popup.html' %}
+
+{% endblock %}

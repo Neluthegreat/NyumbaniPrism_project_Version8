@@ -1,0 +1,254 @@
+{% extends 'memberofmaintenance/base.html' %}
+
+{% block content %}
+
+<div class="w-full" x-data="assetManagementState()">
+
+    <!-- LIST VIEW -->
+    <div x-show="assetView === 'list'" x-cloak>
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold">Asset Management</h1>
+            <button class="bg-white text-gray-700 px-4 py-2 rounded-lg border hover:bg-gray-50 transition">View Requisition History</button>
+        </div>
+
+        <div class="bg-white p-4 rounded-lg shadow mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="relative col-span-1 md:col-span-2">
+                    <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+                    <input x-model.debounce.300ms="assetSearchQuery" class="pl-10 pr-4 py-2 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search by Asset Name, Tag, Serial Number..." type="text" />
+                </div>
+                <select x-model="assetCategoryFilter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="All">Category: All</option><option>Hardware</option><option>Software</option><option>Networking Gear</option>
+                </select>
+                <select x-model="assetStatusFilter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="All">Status: All</option><option>In Use</option><option>In Storage</option><option>Under Repair</option><option>Decommissioned</option>
+                </select>
+                <select x-model="assetDepartmentFilter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="All">Department: All</option>
+                    <template x-for="dept in departments" :key="dept"><option :value="dept" x-text="dept"></option></template>
+                </select>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow overflow-x-auto">
+            <table class="min-w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset Tag</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned To</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Maintenance</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <template x-for="asset in filteredAssets" :key="asset.id">
+                        <tr @click="selectAsset(asset)" class="hover:bg-gray-50 cursor-pointer">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900" x-text="asset.name"></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="asset.assetTag"></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="asset.category"></td>
+                            <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full" :class="{
+                                'bg-green-100 text-green-800': asset.status === 'In Use',
+                                'bg-blue-100 text-blue-800': asset.status === 'In Storage',
+                                'bg-yellow-100 text-yellow-800': asset.status === 'Under Repair',
+                                'bg-gray-100 text-gray-800': asset.status === 'Decommissioned'
+                            }" x-text="asset.status"></span></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="asset.assignedTo"></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" x-text="asset.lastMaintenance"></td>
+                        </tr>
+                    </template>
+                     <template x-if="filteredAssets.length === 0">
+                        <tr><td colspan="7" class="text-center text-gray-500 py-6">No assets found.</td></tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- DETAILS VIEW -->
+    <div x-show="assetView === 'details' && selectedAsset" x-cloak>
+         <div class="mb-6">
+            <a @click.prevent="backToAssetList()" href="#" class="flex items-center text-blue-600 hover:underline mb-4 text-sm">
+                <span class="material-icons text-base">chevron_left</span>
+                <span>Back to Asset List</span>
+            </a>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <div class="lg:col-span-2">
+                 <div class="mb-6">
+                    <h1 class="text-3xl font-bold" x-text="selectedAsset.name"></h1>
+                    <div class="flex items-center space-x-4 text-sm text-gray-500 mt-2">
+                       <span>Asset Tag: <strong class="text-gray-700" x-text="selectedAsset.assetTag"></strong></span>
+                       <span class="text-gray-300">|</span>
+                       <span>Serial: <strong class="text-gray-700" x-text="selectedAsset.serialNumber"></strong></span>
+                       <span class="text-gray-300">|</span>
+                       <span>Status: 
+                           <span class="px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full" :class="{
+                                'bg-green-100 text-green-800': selectedAsset.status === 'In Use',
+                                'bg-blue-100 text-blue-800': selectedAsset.status === 'In Storage',
+                                'bg-yellow-100 text-yellow-800': selectedAsset.status === 'Under Repair',
+                                'bg-gray-100 text-gray-800': selectedAsset.status === 'Decommissioned'
+                            }" x-text="selectedAsset.status"></span>
+                       </span>
+                    </div>
+                </div>
+
+                <div class="border-b border-gray-200 mb-6">
+                    <nav class="flex space-x-6 -mb-px">
+                        <button @click="assetDetailTab = 'details'" :class="{'border-blue-500 text-blue-600': assetDetailTab === 'details', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': assetDetailTab !== 'details'}" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Details</button>
+                        <button @click="assetDetailTab = 'maintenance'" :class="{'border-blue-500 text-blue-600': assetDetailTab === 'maintenance', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': assetDetailTab !== 'maintenance'}" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Maintenance History</button>
+                        <button @click="assetDetailTab = 'tickets'" :class="{'border-blue-500 text-blue-600': assetDetailTab === 'tickets', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': assetDetailTab !== 'tickets'}" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Associated Tickets</button>
+                        <button @click="assetDetailTab = 'documents'" :class="{'border-blue-500 text-blue-600': assetDetailTab === 'documents', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': assetDetailTab !== 'documents'}" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Attached Documents</button>
+                    </nav>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div x-show="assetDetailTab === 'details'" x-cloak>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
+                            <div><h4 class="text-sm text-gray-500">Category</h4><p class="text-base font-medium text-gray-800" x-text="selectedAsset.category"></p></div>
+                            <div><h4 class="text-sm text-gray-500">Manufacturer</h4><p class="text-base font-medium text-gray-800" x-text="selectedAsset.manufacturer"></p></div>
+                            <div><h4 class="text-sm text-gray-500">Model</h4><p class="text-base font-medium text-gray-800" x-text="selectedAsset.model"></p></div>
+                            <div><h4 class="text-sm text-gray-500">Purchase Date</h4><p class="text-base font-medium text-gray-800" x-text="selectedAsset.purchaseDate"></p></div>
+                            <hr class="md:col-span-2">
+                            <div><h4 class="text-sm text-gray-500">Assigned To</h4><p class="text-base font-medium text-gray-800" x-text="selectedAsset.assignedTo"></p></div>
+                            <div><h4 class="text-sm text-gray-500">Department</h4><p class="text-base font-medium text-gray-800" x-text="selectedAsset.department"></p></div>
+                        </div>
+                    </div>
+
+                    <div x-show="assetDetailTab === 'maintenance'" x-cloak>
+                         <ul class="divide-y divide-gray-200">
+                            <template x-for="task in assetMaintenanceHistory" :key="task.id">
+                                <li class="py-4">
+                                    <p class="font-semibold text-gray-800" x-text="task.name"></p>
+                                    <p class="text-sm text-gray-500" x-text="`Completed on ${new Date(task.dueDate).toLocaleDateString()} by ${task.assignedTo}`"></p>
+                                </li>
+                            </template>
+                            <template x-if="assetMaintenanceHistory.length === 0"><li class="text-center text-gray-500 py-6">No maintenance history found for this asset.</li></template>
+                        </ul>
+                    </div>
+                    
+                    <div x-show="assetDetailTab === 'tickets'" x-cloak>
+                        <table class="min-w-full">
+                            <thead class="border-b"><tr><th class="py-2 text-left text-xs font-medium text-gray-500 uppercase">Ticket ID</th><th class="py-2 text-left text-xs font-medium text-gray-500 uppercase">Subject</th><th class="py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th></tr></thead>
+                            <tbody>
+                                <template x-for="ticket in assetTickets" :key="ticket.id">
+                                    <tr>
+                                        <td class="py-3 whitespace-nowrap text-sm text-blue-600 font-semibold" x-text="ticket.id"></td>
+                                        <td class="py-3 whitespace-nowrap text-sm text-gray-800" x-text="ticket.subject"></td>
+                                        <td class="py-3 whitespace-nowrap text-sm text-gray-500" x-text="ticket.status"></td>
+                                    </tr>
+                                </template>
+                                <template x-if="assetTickets.length === 0"><tr><td colspan="3" class="text-center text-gray-500 py-6">No tickets associated with this asset.</td></tr></template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div x-show="assetDetailTab === 'documents'" x-cloak>
+                         <ul class="divide-y divide-gray-200">
+                            <template x-for="doc in assetDocuments" :key="doc.id">
+                                <li class="py-3 flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <span class="material-icons text-gray-500" x-text="doc.type === 'pdf' ? 'picture_as_pdf' : 'description'"></span>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-gray-800" x-text="doc.name"></p>
+                                            <p class="text-sm text-gray-500" x-text="`Size: ${doc.size}`"></p>
+                                        </div>
+                                    </div>
+                                    <a :href="doc.url" target="_blank" class="p-2 rounded-full hover:bg-gray-100"><span class="material-icons text-gray-600">download</span></a>
+                                </li>
+                            </template>
+                            <template x-if="assetDocuments.length === 0"><li class="text-center text-gray-500 py-6">No documents attached to this asset.</li></template>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-1 sticky top-24">
+                <div class="bg-white p-6 rounded-lg shadow space-y-3">
+                    <h3 class="text-lg font-bold mb-2">Actions</h3>
+                    <button class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-blue-700 transition">
+                        <span class="material-icons">add_circle_outline</span>
+                        <span>Create New Ticket</span>
+                    </button>
+                    <button class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-800 transition">
+                        <span class="material-icons">calendar_today</span>
+                        <span>Schedule Maintenance</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function assetManagementState() {
+    // Mock data for assets, tickets, etc.
+    // In a real Django app, this data would be passed from the view.
+    const allAssets = [
+        { id: 1, name: 'Printer HP Indigo 7900', assetTag: 'PRN-PUB-001', serialNumber: 'SG45H8J34', category: 'Hardware', status: 'Under Repair', assignedTo: 'John Doe', department: 'Publishing', lastMaintenance: '2023-09-15', manufacturer: 'HP', model: 'Indigo 7900', purchaseDate: '2021-06-20' },
+        { id: 2, name: 'Main Web Server', assetTag: 'SRV-WEB-001', serialNumber: 'VM-45FGT67H', category: 'Hardware', status: 'In Use', assignedTo: 'Alice Stone', department: 'IT Support', lastMaintenance: '2023-10-05', manufacturer: 'Dell', model: 'PowerEdge R740', purchaseDate: '2022-01-10' },
+        { id: 3, name: 'Cisco Catalyst 9300', assetTag: 'NET-SW-003', serialNumber: 'FOC2319Y2CZ', category: 'Networking Gear', status: 'In Use', assignedTo: 'Charlie Davis', department: 'Networking', lastMaintenance: '2023-08-22', manufacturer: 'Cisco', model: 'Catalyst 9300', purchaseDate: '2022-03-15' },
+        { id: 4, name: 'Adobe Creative Cloud', assetTag: 'SW-DESIGN-001', serialNumber: 'N/A', category: 'Software', status: 'In Use', assignedTo: 'Marketing Team', department: 'Marketing', lastMaintenance: 'N/A', manufacturer: 'Adobe', model: 'Creative Cloud', purchaseDate: '2023-01-01' },
+        { id: 5, name: 'Dev Laptop - Dell XPS 15', assetTag: 'LAP-DEV-012', serialNumber: '8FGH5J9', category: 'Hardware', status: 'In Storage', assignedTo: 'N/A', department: 'IT Support', lastMaintenance: '2023-01-10', manufacturer: 'Dell', model: 'XPS 15', purchaseDate: '2023-01-10' },
+        { id: 6, name: 'Decommissioned Server', assetTag: 'SRV-OLD-010', serialNumber: 'VM-8JHG23D', category: 'Hardware', status: 'Decommissioned', assignedTo: 'N/A', department: 'IT Support', lastMaintenance: '2022-05-20', manufacturer: 'HP', model: 'ProLiant G9', purchaseDate: '2018-02-15' },
+    ];
+    const allMaintenance = [
+        { id: 1, name: 'Quarterly Patching', asset: 'Main Web Server', dueDate: '2023-10-05T10:00:00', status: 'Completed', assignedTo: 'Alice Stone' },
+    ];
+    const allTickets = [
+        { id: '#TICK-00123', subject: 'Printer Down', assetId: 1, status: 'Open' },
+        { id: '#TICK-00124', subject: 'Network Issues', assetId: 3, status: 'In Progress' },
+    ];
+    const allDocuments = [
+        { id: 1, assetId: 1, name: "HP Indigo User Manual.pdf", type: 'pdf', size: '5.2 MB', url: '#' },
+        { id: 2, assetId: 3, name: "Catalyst 9300 Config Guide.pdf", type: 'pdf', size: '2.1 MB', url: '#' },
+    ];
+
+    return {
+        assetView: 'list',
+        selectedAsset: null,
+        assetDetailTab: 'details',
+        assetSearchQuery: '',
+        assetCategoryFilter: 'All',
+        assetStatusFilter: 'All',
+        assetDepartmentFilter: 'All',
+        departments: ['Publishing', 'Networking', 'IT Support', 'Marketing'],
+        assets: allAssets,
+
+        get filteredAssets() {
+            const query = this.assetSearchQuery.toLowerCase();
+            return this.assets.filter(asset => {
+                const searchMatch = !query || asset.name.toLowerCase().includes(query) || asset.assetTag.toLowerCase().includes(query) || asset.serialNumber.toLowerCase().includes(query);
+                const categoryMatch = this.assetCategoryFilter === 'All' || asset.category === this.assetCategoryFilter;
+                const statusMatch = this.assetStatusFilter === 'All' || asset.status === this.assetStatusFilter;
+                const departmentMatch = this.assetDepartmentFilter === 'All' || asset.department === this.assetDepartmentFilter;
+                return searchMatch && categoryMatch && statusMatch && departmentMatch;
+            });
+        },
+        selectAsset(asset) {
+            this.selectedAsset = asset;
+            this.assetDetailTab = 'details';
+            this.assetView = 'details';
+        },
+        backToAssetList() {
+            this.assetView = 'list';
+            this.selectedAsset = null;
+        },
+        get assetMaintenanceHistory() {
+            if (!this.selectedAsset) return [];
+            return allMaintenance.filter(task => task.asset === this.selectedAsset.name && task.status === 'Completed');
+        },
+        get assetTickets() {
+            if (!this.selectedAsset) return [];
+            return allTickets.filter(ticket => ticket.assetId === this.selectedAsset.id);
+        },
+        get assetDocuments() {
+            if (!this.selectedAsset) return [];
+            return allDocuments.filter(doc => doc.assetId === this.selectedAsset.id);
+        },
+    }
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'HoD_Development/base.html' %}
+{% block title %}Invoices{% endblock %}
+{% block content %}
+<div>
+    <header class="mb-8">
+        <nav class="text-sm font-medium text-gray-500 mb-2">
+            <a class="text-blue-600 hover:underline" href="{% url 'HoD_Development:commercials' %}">Commercials</a>
+            <span class="mx-2">&gt;</span>
+            <span class="text-gray-700">Invoices</span>
+        </nav>
+        <h1 class="text-3xl font-bold text-gray-900">Client Invoices</h1>
+    </header>
+    <div class="bg-white p-8 rounded-lg shadow-md">
+        <p class="text-gray-600">Invoice management table and filters will be displayed here.</p>
+    </div>
+</div>
+{% endblock %}

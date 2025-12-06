@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>{% block title %}PRISM Service Management{% endblock %}</title>
+    
+    <!-- TailwindCSS, Google Fonts, and Material Icons -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+
+    <!-- Styles for the sidebar behavior -->
+    <style type="text/tailwindcss">
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar {
+            transition: width 0.3s ease;
+        }
+        .sidebar-collapsed {
+            width: 80px; /* Width when collapsed */
+        }
+        .sidebar:not(.sidebar-collapsed) {
+            width: 256px; /* Width when expanded */
+        }
+        .sidebar .nav-text, .sidebar .arrow-icon {
+            opacity: 1;
+            transition: opacity 0.2s ease;
+            white-space: nowrap;
+        }
+        .sidebar-collapsed .nav-text, .sidebar-collapsed .arrow-icon {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .sidebar-collapsed .submenu {
+            display: none;
+        }
+        .submenu {
+            display: none; /* Hidden by default */
+        }
+        .submenu-active {
+            display: block; /* Shown when parent is clicked */
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+<div class="flex h-screen">
+    
+    <!-- ============================ SIDEBAR ============================ -->
+    <aside class="sidebar bg-white flex flex-col p-4 shadow-lg" id="sidebar">
+        <div class="flex items-center mb-8 h-8">
+            <span class="material-icons-outlined text-indigo-600 text-3xl">api</span>
+            <span class="ml-3 text-2xl font-bold nav-text">PRISM</span>
+        </div>
+        
+        <nav class="flex-grow">
+            <ul>
+                <!-- Dashboard -->
+                <li class="mb-2">
+                    <a class="flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg" href="{% url 'maintenance-dashboard' %}">
+                        <span class="material-icons-outlined">dashboard</span>
+                        <span class="ml-4 nav-text">Dashboard</span>
+                    </a>
+                </li>
+                
+                <!-- Service Management Menu -->
+                <li class="mb-2">
+                    <div class="flex items-center p-3 rounded-lg cursor-pointer text-gray-600 hover:bg-gray-100" id="service-management-trigger">
+                        <span class="material-icons-outlined">schedule</span>
+                        <span class="ml-4 flex-grow nav-text">Service Management</span>
+                        <span class="material-icons-outlined arrow-icon">expand_more</span>
+                    </div>
+                    <ul class="submenu mt-2 pl-6" id="service-management-submenu">
+                        <li class="mb-2"><a class="block p-2 text-gray-600 hover:bg-gray-100 rounded-lg nav-text" href="{% url 'ticketing-system' %}">Ticketing System</a></li>
+                        <li class="mb-2"><a class="block p-2 text-gray-600 hover:bg-gray-100 rounded-lg nav-text" href="{% url 'sla-management' %}">SLA Management</a></li>
+                        <li><a class="block p-2 text-gray-600 hover:bg-gray-100 rounded-lg nav-text" href="{% url 'change-management' %}">Change Management</a></li>
+                    </ul>
+                </li>
+                
+                <!-- Store & Inventory Menu -->
+                <li class="mb-2">
+                    <div class="flex items-center p-3 rounded-lg cursor-pointer text-gray-600 hover:bg-gray-100" id="store-inventory-trigger">
+                        <span class="material-icons-outlined">store</span>
+                        <span class="ml-4 flex-grow nav-text">Store & Inventory</span>
+                        <span class="material-icons-outlined arrow-icon">expand_more</span>
+                    </div>
+                    <ul class="submenu mt-2 pl-6" id="store-inventory-submenu">
+                        <li class="mb-2"><a class="block p-2 text-gray-600 hover:bg-gray-100 rounded-lg nav-text" href="{% url 'asset-management' %}">Asset Management</a></li>
+                        <li class="mb-2"><a class="block p-2 text-gray-600 hover:bg-gray-100 rounded-lg nav-text" href="{% url 'maintenance-history' %}">Maintenance History</a></li>
+                        <li><a class="block p-2 text-gray-600 hover:bg-gray-100 rounded-lg nav-text" href="{% url 'inventory-requisitions' %}">Inventory Requisitions</a></li>
+                    </ul>
+                </li>
+
+                <!-- Project Management Menu -->
+                <li class="mb-2">
+                    <div class="flex items-center p-3 rounded-lg cursor-pointer text-gray-600 hover:bg-gray-100" id="project-management-trigger">
+                        <span class="material-icons-outlined">event</span>
+                        <span class="ml-4 flex-grow nav-text">Project Management</span>
+                        <span class="material-icons-outlined arrow-icon">expand_more</span>
+                    </div>
+                    <ul class="submenu mt-2 pl-6" id="project-management-submenu">
+                        <li class="mb-2"><a class="block p-2 text-gray-600 hover:bg-gray-100 rounded-lg nav-text" href="{% url 'maintenance-contracts' %}">Maintenance Contracts</a></li>
+                        <li><a class="block p-2 text-gray-600 hover:bg-gray-100 rounded-lg nav-text" href="{% url 'scheduled-site-visits' %}">Scheduled Site Visits</a></li>
+                    </ul>
+                </li>
+                
+                <!-- Analytics & Reporting -->
+                <li class="mb-2">
+                    <a class="flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg" href="{% url 'analytics-reporting' %}">
+                        <span class="material-icons-outlined">analytics</span>
+                        <span class="ml-4 nav-text">Analytics & Reporting</span>
+                    </a>
+                </li>
+                
+                <!-- System Settings -->
+                <li class="mb-2">
+                    <a class="flex items-center p-3 text-gray-600 hover:bg-gray-100 rounded-lg" href="{% url 'system-settings' %}">
+                        <span class="material-icons-outlined">settings</span>
+                        <span class="ml-4 nav-text">System Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- ======================== MAIN CONTENT BLOCK ======================== -->
+    <main class="flex-1 p-8 overflow-y-auto" id="main-content">
+        {% block content %}
+        <!-- The unique content for each page will be injected here. -->
+        <h1 class="text-4xl font-bold">Welcome to the Maintenance Module</h1>
+        <p class="mt-4">This is the base template. The content for each page will replace this message.</p>
+        {% endblock %}
+    </main>
+</div>
+
+<!-- ========================= JAVASCRIPT LOGIC ========================= -->
+<script>
+    const sidebar = document.getElementById('sidebar');
+    // Select all the main menu items that have a submenu
+    const menuTriggers = document.querySelectorAll('#sidebar nav > ul > li > div');
+
+    // --- Sidebar Hover Logic: Expands and collapses the sidebar ---
+    sidebar.addEventListener('mouseenter', () => {
+        if (sidebar.classList.contains('sidebar-collapsed')) {
+            sidebar.classList.remove('sidebar-collapsed');
+        }
+    });
+
+    sidebar.addEventListener('mouseleave', () => {
+        // Only collapse the sidebar if no submenu is actively open
+        const isAnySubmenuActive = document.querySelector('.submenu-active');
+        if (!isAnySubmenuActive) {
+            sidebar.classList.add('sidebar-collapsed');
+        }
+    });
+
+    // --- Sidebar Menu Accordion Logic ---
+    menuTriggers.forEach(trigger => {
+        const submenu = trigger.nextElementSibling; // The <ul> that follows the <div>
+        const arrow = trigger.querySelector('.arrow-icon');
+
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevents the click from bubbling up
+            const isActive = submenu.classList.contains('submenu-active');
+
+            // First, close all other currently open submenus
+            document.querySelectorAll('.submenu.submenu-active').forEach(openSubmenu => {
+                if (openSubmenu !== submenu) {
+                    openSubmenu.classList.remove('submenu-active');
+                    const otherTrigger = openSubmenu.previousElementSibling;
+                    otherTrigger.classList.remove('bg-indigo-500', 'text-white');
+                    otherTrigger.querySelector('.arrow-icon').textContent = 'expand_more';
+                }
+            });
+
+            // Then, toggle the state of the clicked menu
+            if (isActive) {
+                // It was active, so we close it
+                submenu.classList.remove('submenu-active');
+                trigger.classList.remove('bg-indigo-500', 'text-white');
+                arrow.textContent = 'expand_more';
+                // After closing, check if the mouse is outside. If so, collapse.
+                if (!sidebar.matches(':hover')) {
+                    sidebar.classList.add('sidebar-collapsed');
+                }
+            } else {
+                // It was inactive, so we open it
+                submenu.classList.add('submenu-active');
+                trigger.classList.add('bg-indigo-500', 'text-white');
+                arrow.textContent = 'expand_less';
+                // Always ensure the sidebar is expanded when a menu is opened
+                sidebar.classList.remove('sidebar-collapsed');
+            }
+        });
+    });
+
+    // --- Initial State: Start with the sidebar collapsed ---
+    document.addEventListener('DOMContentLoaded', () => {
+        sidebar.classList.add('sidebar-collapsed');
+    });
+
+        // This prevents errors on pages that don't have the ticket form
+    const newTicketBtn = document.getElementById('new-ticket-btn');
+    const newTicketPopup = document.getElementById('new-ticket-popup');
+    const closePopupBtn = document.getElementById('close-popup-btn');
+    const cancelPopupBtn = document.getElementById('cancel-popup-btn');
+    const newTicketForm = document.getElementById('new-ticket-form');
+    const ticketsTableBody = document.getElementById('tickets-table-body');
+
+    if (newTicketBtn) {
+        // --- Show the popup ---
+        newTicketBtn.addEventListener('click', () => {
+            newTicketPopup.classList.remove('hidden');
+        });
+
+        // --- Hide the popup (using functions to avoid repeating code) ---
+        const hidePopup = () => {
+            newTicketPopup.classList.add('hidden');
+        };
+
+        closePopupBtn.addEventListener('click', hidePopup);
+        cancelPopupBtn.addEventListener('click', hidePopup);
+
+        // --- Handle Form Submission ---
+        newTicketForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // IMPORTANT: Prevents the page from reloading
+
+            // 1. Get data from the form inputs
+            const subject = document.getElementById('ticket-subject').value;
+            const requester = document.getElementById('ticket-requester').value;
+            const priority = document.getElementById('ticket-priority').value;
+
+            // 2. Create a new table row element
+            const newRow = document.createElement('tr');
+            
+            // 3. Add the HTML for the cells with the data
+            newRow.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${subject}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${requester}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">${priority}</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">Open</span>
+                </td>
+            `;
+
+            // 4. Append the new row to the table body
+            ticketsTableBody.appendChild(newRow);
+
+            // 5. Reset the form for the next entry and hide the popup
+            newTicketForm.reset();
+            hidePopup();
+        });
+    }
+
+
+     document.addEventListener('DOMContentLoaded', () => {
+        // We wrap everything in DOMContentLoaded to make sure the page is loaded first
+        const newTicketBtn = document.getElementById('new-ticket-btn');
+        const newTicketPopup = document.getElementById('new-ticket-popup');
+        
+        if (newTicketBtn && newTicketPopup) {
+            const closePopupBtn = document.getElementById('close-popup-btn');
+            const cancelPopupBtn = document.getElementById('cancel-popup-btn');
+            const newTicketForm = document.getElementById('new-ticket-form');
+            const ticketsTableBody = document.getElementById('tickets-table-body');
+
+            const hidePopup = () => newTicketPopup.classList.add('hidden');
+            const showPopup = () => newTicketPopup.classList.remove('hidden');
+
+            newTicketBtn.addEventListener('click', showPopup);
+            closePopupBtn.addEventListener('click', hidePopup);
+            cancelPopupBtn.addEventListener('click', hidePopup);
+
+            newTicketForm.addEventListener('submit', (e) => {
+                e.preventDefault(); // Stop page reload
+
+                // 1. Get data from the form
+                const subject = document.getElementById('ticket-subject').value;
+                const requester = document.getElementById('ticket-requester').value;
+                const asset = document.getElementById('ticket-asset').value || 'N/A'; // Use N/A if empty
+                const priority = document.getElementById('ticket-priority').value;
+
+                // 2. Generate realistic placeholder data for other columns
+                const ticketId = `TKT-${Math.floor(10000 + Math.random() * 90000)}`;
+                const createdDate = new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                // 3. Create dynamic priority styling
+                const priorityColors = {
+                    'Low': 'bg-gray-200 text-gray-600',
+                    'Medium': 'bg-green-100 text-green-800',
+                    'High': 'bg-yellow-100 text-yellow-800',
+                    'Critical': 'bg-red-100 text-red-800'
+                };
+                const prioritySpan = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${priorityColors[priority]}">${priority}</span>`;
+
+                // 4. Create the new table row with all 9 columns
+                const newRow = document.createElement('tr');
+                newRow.classList.add('hover:bg-gray-50');
+                newRow.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${ticketId}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${subject}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${requester}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-indigo-600 hover:underline"><a href="#">${asset}</a></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${createdDate}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Unassigned</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">${prioritySpan}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">Open</span></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">Met</td>
+                `;
+
+                // 5. Add the new row to the table, reset the form, and hide the popup
+                ticketsTableBody.appendChild(newRow);
+                newTicketForm.reset();
+                hidePopup();
+            });
+        }
+    });
+
+    const newChangeBtn = document.getElementById('new-change-request-btn');
+        const changesDashboard = document.getElementById('changes-dashboard');
+        const newChangeView = document.getElementById('new-change-view');
+        
+        // This 'if' check ensures this code only runs on the Change Management page
+        if (newChangeBtn && changesDashboard && newChangeView) {
+            const cancelChangeBtn = document.getElementById('cancel-change-creation');
+
+            // Function to show the form and hide the dashboard
+            const showNewChangeForm = () => {
+                changesDashboard.classList.add('hidden');
+                newChangeView.classList.remove('hidden');
+            };
+
+            // Function to show the dashboard and hide the form
+            const showChangesDashboard = () => {
+                newChangeView.classList.add('hidden');
+                changesDashboard.classList.remove('hidden');
+            };
+
+            newChangeBtn.addEventListener('click', showNewChangeForm);
+            cancelChangeBtn.addEventListener('click', showChangesDashboard);
+
+            const newSlaBtn = document.getElementById('new-sla-policy-btn');
+        const newSlaPopup = document.getElementById('new-sla-popup');
+
+        if (newSlaBtn && newSlaPopup) {
+            const closeSlaPopupBtn = document.getElementById('close-sla-popup');
+            const cancelSlaCreationBtn = document.getElementById('cancel-sla-creation');
+
+            const hideSlaPopup = () => newSlaPopup.classList.add('hidden');
+            const showSlaPopup = () => newSlaPopup.classList.remove('hidden');
+
+            newSlaBtn.addEventListener('click', showSlaPopup);
+            closeSlaPopupBtn.addEventListener('click', hideSlaPopup);
+            cancelSlaCreationBtn.addEventListener('click', hideSlaPopup);
+        }
+        
+        
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+        // ... (Existing TICKET, SLA, CHANGE, ASSET, etc. javascript) ...
+        
+        // ==============================================================
+        // ==== JAVASCRIPT FOR REQUISITIONS DASHBOARD/DETAIL VIEW =====
+        // ==============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+        // ... (Existing TICKET, SLA, CHANGE, ASSET, REQUISITION-DETAIL, etc. javascript) ...
+        
+        // ========================================================
+        // ==== JAVASCRIPT FOR NEW REQUISITION POPUP =====
+        // ========================================================
+        const newRequisitionBtn = document.getElementById('new-requisition-btn');
+        const newRequisitionPopup = document.getElementById('new-requisition-popup');
+        
+        if (newRequisitionBtn && newRequisitionPopup) {
+            const closeRequisitionPopupBtn = document.getElementById('close-requisition-popup');
+            const cancelRequisitionCreationBtn = document.getElementById('cancel-requisition-creation');
+
+            const hideRequisitionPopup = () => newRequisitionPopup.classList.add('hidden');
+            const showRequisitionPopup = () => newRequisitionPopup.classList.remove('hidden');
+
+            newRequisitionBtn.addEventListener('click', showRequisitionPopup);
+            closeRequisitionPopupBtn.addEventListener('click', hideRequisitionPopup);
+            cancelRequisitionCreationBtn.addEventListener('click', hideRequisitionPopup);
+        }
+         const newVisitBtn = document.getElementById('new-visit-btn');
+        const newVisitPopup = document.getElementById('new-visit-popup');
+        
+        if (newVisitBtn && newVisitPopup) {
+            const closeVisitPopupBtn = document.getElementById('close-visit-popup');
+            const cancelVisitCreationBtn = document.getElementById('cancel-visit-creation');
+
+            const hideVisitPopup = () => newVisitPopup.classList.add('hidden');
+            const showVisitPopup = () => newVisitPopup.classList.remove('hidden');
+
+            newVisitBtn.addEventListener('click', showVisitPopup);
+            closeVisitPopupBtn.addEventListener('click', hideVisitPopup);
+            cancelVisitCreationBtn.addEventListener('click', hideVisitPopup);
+        }
+    });
+    }); // <-- Add this closing brace to match the extra DOMContentLoaded above
+</script>
+</body>
+</html>

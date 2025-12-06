@@ -1,0 +1,31 @@
+{% extends "hod_of_human_resources/base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Succession Plans</h2>
+    <a href="{% url 'hod_of_human_resources:succession_plan_create' %}" class="btn btn-primary mb-3">Create New Plan</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Position</th>
+                <th>Employee</th>
+                <th>Readiness</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for plan in plans %}
+            <tr>
+                <td>{{ plan.position }}</td>
+                <td>{{ plan.employee.full_name }}</td>
+                <td>{{ plan.readiness }}</td>
+                <td>
+                    <a href="{% url 'hod_of_human_resources:succession_plan_update' plan.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{% url 'hod_of_human_resources:succession_plan_delete' plan.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

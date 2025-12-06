@@ -1,0 +1,173 @@
+{% extends 'memberofmaintenance/base.html' %}
+
+{% block content %}
+
+<div class="w-full" x-data="projectManagementState()">
+    
+    <!-- DASHBOARD VIEW -->
+    <div x-show="projectView === 'dashboard'" x-cloak>
+        <div class="flex justify-between items-center mb-6 gap-4">
+            <h1 class="text-3xl font-bold whitespace-nowrap">Project Management: My Contracts</h1>
+            <div class="relative w-full max-w-sm">
+                <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+                <input x-model.debounce.300ms="projectSearchQuery" type="text" placeholder="Search by Client Name or Project ID..." class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+        </div>
+        
+        <div class="flex space-x-2 mb-6">
+            <button @click="projectStatusFilter = 'All'" :class="{ 'bg-blue-600 text-white': projectStatusFilter === 'All', 'bg-white text-gray-700': projectStatusFilter !== 'All' }" class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-500 hover:text-white transition">All</button>
+            <button @click="projectStatusFilter = 'Active'" :class="{ 'bg-blue-600 text-white': projectStatusFilter === 'Active', 'bg-white text-gray-700': projectStatusFilter !== 'Active' }" class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-500 hover:text-white transition">Active</button>
+            <button @click="projectStatusFilter = 'Upcoming'" :class="{ 'bg-blue-600 text-white': projectStatusFilter === 'Upcoming', 'bg-white text-gray-700': projectStatusFilter !== 'Upcoming' }" class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-500 hover:text-white transition">Upcoming</button>
+            <button @click="projectStatusFilter = 'Completed'" :class="{ 'bg-blue-600 text-white': projectStatusFilter === 'Completed', 'bg-white text-gray-700': projectStatusFilter !== 'Completed' }" class="px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-500 hover:text-white transition">Completed</button>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+             <template x-for="project in filteredProjects" :key="project.id">
+                <div @click="selectProject(project)" class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <h2 class="text-xl font-bold text-gray-800" x-text="project.clientName"></h2>
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full" :class="{
+                                'bg-green-100 text-green-800': project.status === 'Active',
+                                'bg-blue-100 text-blue-800': project.status === 'Upcoming',
+                                'bg-gray-200 text-gray-800': project.status === 'Completed',
+                            }" x-text="project.status"></span>
+                        </div>
+                        <p class="text-sm text-gray-500" x-text="project.projectId"></p>
+                        <p class="text-sm text-gray-600 mt-2" x-text="`Contract: ${project.contractStart} - ${project.contractEnd}`"></p>
+                    </div>
+                    <div>
+                         <div class="mt-2">
+                            <div class="flex justify-between text-xs text-gray-600 mb-1">
+                                <span>Progress</span>
+                                <span x-text="`${project.tasksCompleted} / ${project.tasksTotal} visits`"></span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-blue-600 h-2.5 rounded-full" :style="`width: ${(project.tasksCompleted / project.tasksTotal) * 100}%`"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template x-if="filteredProjects.length === 0">
+                <div class="md:col-span-2 lg:col-span-3 text-center text-gray-500 py-12">No contracts match the current filters.</div>
+            </template>
+        </div>
+    </div>
+    
+    <!-- PROJECT DETAILS VIEW -->
+    <div x-show="projectView === 'details' && selectedProject" x-cloak>
+        <nav class="mb-4 text-sm text-gray-500" aria-label="Breadcrumb">
+            <ol class="list-none p-0 inline-flex space-x-2 items-center">
+                <li><a @click.prevent="backToProjectList()" href="#" class="text-blue-600 hover:underline">My Maintenance Contracts</a></li>
+                <li class="flex items-center">
+                    <span class="material-icons text-xs mx-1">chevron_right</span>
+                    <span class="text-gray-700 font-semibold truncate" x-text="`${selectedProject.clientName} - ${selectedProject.projectId}`"></span>
+                </li>
+            </ol>
+        </nav>
+        
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold" x-text="`${selectedProject.clientName}`"></h1>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700">
+                <span class="material-icons">add</span>
+                <span>Log Activity</span>
+            </button>
+        </div>
+        
+        <div class="border-b border-gray-200 mb-6">
+            <nav class="flex space-x-6 -mb-px">
+                <button @click="projectDetailTab = 'overview'" :class="{'border-blue-500 text-blue-600': projectDetailTab === 'overview', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': projectDetailTab !== 'overview'}" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Overview</button>
+                <button @click="projectDetailTab = 'tasks'" :class="{'border-blue-500 text-blue-600': projectDetailTab === 'tasks', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': projectDetailTab !== 'tasks'}" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Scheduled Tasks</button>
+                <button @click="projectDetailTab = 'log'" :class="{'border-blue-500 text-blue-600': projectDetailTab === 'log', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': projectDetailTab !== 'log'}" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Activity Log</button>
+                <button @click="projectDetailTab = 'documents'" :class="{'border-blue-500 text-blue-600': projectDetailTab === 'documents', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': projectDetailTab !== 'documents'}" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Documents</button>
+            </nav>
+        </div>
+        
+        <div x-show="projectDetailTab === 'overview'">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-lg font-bold mb-4">Assets Under Contract</h3>
+                    <ul class="divide-y divide-gray-200">
+                        <template x-for="assetName in selectedProject.assets" :key="assetName">
+                            <li class="py-3 flex justify-between items-center cursor-pointer hover:bg-gray-50 px-2 rounded-md">
+                                <span class="font-medium text-blue-600 hover:underline" x-text="assetName"></span>
+                                <span class="material-icons text-gray-400">chevron_right</span>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+                <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md space-y-4">
+                     <h3 class="text-lg font-bold mb-2">Contract Details</h3>
+                     <div><h4 class="text-sm text-gray-500">Contract Period</h4><p class="text-base font-medium text-gray-800" x-text="`${selectedProject.contractStart} - ${selectedProject.contractEnd}`"></p></div>
+                     <div><h4 class="text-sm text-gray-500">SLA</h4><p class="text-base font-medium text-gray-800" x-text="selectedProject.sla"></p></div>
+                </div>
+            </div>
+        </div>
+        
+        <div x-show="projectDetailTab === 'tasks'">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-bold mb-4">Scheduled Tasks & Visits</h3>
+                <!-- Placeholder for tasks table -->
+                <p class="text-gray-600">A table of scheduled tasks for this project will be displayed here.</p>
+            </div>
+        </div>
+        
+        <div x-show="projectDetailTab === 'log'">
+             <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-bold">Activity Log & Expenses</h3>
+                <!-- Placeholder for activity log table -->
+                <p class="text-gray-600">A table of all logged activities and expenses will be displayed here.</p>
+             </div>
+        </div>
+        
+         <div x-show="projectDetailTab === 'documents'">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-bold mb-4">Contract Documents</h3>
+                <!-- Placeholder for documents list -->
+                <p class="text-gray-600">A list of uploaded documents will be displayed here.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function projectManagementState() {
+    // Mock Data. In Django, this will come from your view.
+    const allMaintenanceProjects = [
+        { id: 1, clientName: 'Cyberdyne Systems', projectId: 'PROJ-MAINT-078', contractStart: 'Jan 1, 2024', contractEnd: 'Dec 31, 2024', status: 'Active', tasksCompleted: 8, tasksTotal: 12, sla: '4-hour response time', assets: ['Main Web Server', 'Decommissioned Server'] },
+        { id: 2, clientName: 'Stark Industries', projectId: 'PROJ-MAINT-079', contractStart: 'Mar 1, 2024', contractEnd: 'Feb 28, 2025', status: 'Active', tasksCompleted: 5, tasksTotal: 12, sla: '2-hour response time', assets: ['Cisco Catalyst 9300'] },
+        { id: 3, clientName: 'Wayne Enterprises', projectId: 'PROJ-MAINT-080', contractStart: 'Oct 1, 2024', contractEnd: 'Sep 30, 2025', status: 'Upcoming', tasksCompleted: 0, tasksTotal: 4, sla: 'Quarterly on-site', assets: ['Printer HP Indigo 7900'] },
+        { id: 4, clientName: 'Omni Consumer Products', projectId: 'PROJ-MAINT-077', contractStart: 'Jan 1, 2023', contractEnd: 'Dec 31, 2023', status: 'Completed', tasksCompleted: 12, tasksTotal: 12, sla: 'Standard Maintenance', assets: [] }
+    ];
+
+    return {
+        projectView: 'dashboard',
+        selectedProject: null,
+        projectDetailTab: 'overview',
+        maintenanceProjects: allMaintenanceProjects,
+        projectSearchQuery: '',
+        projectStatusFilter: 'All',
+
+        get filteredProjects() {
+            const query = this.projectSearchQuery.toLowerCase();
+            return this.maintenanceProjects.filter(proj => {
+                const searchMatch = !query || proj.clientName.toLowerCase().includes(query) || proj.projectId.toLowerCase().includes(query);
+                const statusMatch = this.projectStatusFilter === 'All' || proj.status === this.projectStatusFilter;
+                return searchMatch && statusMatch;
+            });
+        },
+        selectProject(project) {
+            this.selectedProject = project;
+            this.projectDetailTab = 'overview';
+            this.projectView = 'details';
+        },
+        backToProjectList() {
+            this.projectView = 'dashboard';
+            this.selectedProject = null;
+        },
+    }
+}
+</script>
+
+{% endblock %}

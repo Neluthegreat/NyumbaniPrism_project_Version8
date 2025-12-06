@@ -1,0 +1,44 @@
+{% extends "hod_of_human_resources/base.html" %}
+
+{% block title %}Meetings{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">Meetings</h1>
+    <a href="{% url 'hod_of_human_resources:meeting_create' %}" class="btn btn-primary mb-3">Schedule New Meeting</a>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">All Meetings</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Venue</th>
+                            <th>Time</th>
+                            <th>Created By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for meeting in meetings %}
+                        <tr>
+                            <td><a href="{% url 'hod_of_human_resources:meeting_detail' meeting.pk %}">{{ meeting.title }}</a></td>
+                            <td>{{ meeting.venue }}</td>
+                            <td>{{ meeting.meeting_time|date:"Y-m-d H:i" }}</td>
+                            <td>{{ meeting.created_by.username }}</td>
+                            <td>
+                                <a href="{% url 'hod_of_human_resources:meeting_update' meeting.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="{% url 'hod_of_human_resources:meeting_delete' meeting.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

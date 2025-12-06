@@ -1,0 +1,36 @@
+<!-- ======================= POPUP MODAL for New Ticket ======================= -->
+<div id="new-ticket-popup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-gray-800">Create New Ticket / Maintenance Task</h2>
+            <button id="close-popup-btn" class="text-gray-400 hover:text-gray-600"><span class="material-icons-outlined">close</span></button>
+        </div>
+        
+        <form id="new-ticket-form">
+            <div class="space-y-4">
+                <div>
+                    <label for="ticket-subject" class="block text-sm font-medium text-gray-700">Subject</label>
+                    <input type="text" id="ticket-subject" placeholder="e.g., Annual service required" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                </div>
+                <div>
+                    <label for="ticket-requester" class="block text-sm font-medium text-gray-700">Requester Name</label>
+                    <input type="text" id="ticket-requester" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                </div>
+                 <div>
+                    <label for="ticket-asset" class="block text-sm font-medium text-gray-700">Associated Asset</label>
+                    <input type="text" id="ticket-asset" placeholder="e.g., ASSET-001" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                </div>
+                <div>
+                    <label for="ticket-priority" class="block text-sm font-medium text-gray-700">Priority</label>
+                    <select id="ticket-priority" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+                        <option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-4 mt-6">
+                <button type="button" id="cancel-popup-btn" class="bg-white text-gray-700 border border-gray-300 font-semibold py-2 px-4 rounded-lg shadow-sm hover:bg-gray-50">Cancel</button>
+                <button type="submit" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700">Create Task</button>
+            </div>
+        </form>
+    </div>
+</div>

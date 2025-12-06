@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>PRISM System Settings</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style type="text/tailwindcss">
+        :root {
+            --primary-color: #0c77f2;
+            --primary-hover-color: #0a63ce;
+            --background-color: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-active: #ffffff;
+            --border-color: #e2e8f0;
+            --sidebar-bg: #ffffff;
+        }
+        .sidebar {
+            transition: width 0.3s ease-in-out;
+        }
+        .sidebar-collapsed {
+            width: 5.5rem;
+        }
+        .sidebar-expanded {
+            width: 18rem;
+        }
+        .sidebar.sidebar-collapsed:not(:hover) .sidebar-text,
+        .sidebar.sidebar-collapsed:not(:hover) .dropdown-icon {
+            opacity: 0;
+            width: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, width 0.2s ease, visibility 0.2s ease;
+        }
+        .sidebar .sidebar-text,
+        .sidebar .dropdown-icon {
+            opacity: 1;
+            width: auto;
+            visibility: visible;
+            transition: opacity 0.3s 0.1s ease, width 0.2s 0.1s ease, visibility 0.2s 0.1s ease;
+        }
+        .sidebar-item-active, .sidebar-item:hover {
+            background-color: var(--primary-color);
+            color: var(--text-active);
+        }
+        .sidebar-item-active svg, .sidebar-item:hover svg {
+            color: var(--text-active);
+        }
+    </style>
+</head>
+<body class="bg-[var(--background-color)]" style="font-family: 'Inter', sans-serif;">
+    <div class="relative flex min-h-screen" x-data="{ isSidebarExpanded: true }">
+        <aside :class="isSidebarExpanded ? 'sidebar-expanded' : 'sidebar-collapsed'" @mouseenter="isSidebarExpanded = true" @mouseleave="isSidebarExpanded = false" class="sidebar flex flex-col bg-[var(--sidebar-bg)] shadow-lg fixed top-0 left-0 h-full overflow-hidden z-10">
+            <div class="flex items-center gap-4 p-6 border-b border-[var(--border-color)] flex-shrink-0">
+                <svg class="text-[var(--primary-color)] w-8 h-8 flex-shrink-0" fill="currentColor" height="32" viewBox="0 0 256 256" width="32" xmlns="http://www.w3.org/2000/svg"><path d="M208.68,52.23,141.22,12.06a24,24,0,0,0-26.44,0L47.32,52.23a24,24,0,0,0-15,21.91V181.86a24,24,0,0,0,15,21.91l67.46,40.17a24,24,0,0,0,26.44,0l67.46-40.17a24,24,0,0,0,15-21.91V74.14A24,24,0,0,0,208.68,52.23Z" opacity="0.2"></path><path d="M212.09,47.8,144.62,8.62a23.93,23.93,0,0,0-33.24,0L43.91,47.8a24,24,0,0,0-11.9,20.73V187.47a24,24,0,0,0,11.9,20.73l67.47,39.18a23.93,23.93,0,0,0,33.24,0l67.47-39.18a24,24,0,0,0,11.9-20.73V68.53A24,24,0,0,0,212.09,47.8ZM128,24,192.2,62.13,128,100.25,63.8,62.13Zm-88,54.53L128,124.75v78.51L56.7,163.64ZM144,203.26V124.75l88-46.22v98.73Z"></path></svg>
+                <span class="sidebar-text text-xl font-bold text-[var(--text-primary)] whitespace-nowrap">PRISM</span>
+            </div>
+            <nav class="flex-grow p-4 space-y-2">
+                <a class="sidebar-item flex items-center gap-4 px-4 py-2.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-active)]" href="{% url 'panel:panel_dashboard' %}">
+                    <svg class="w-6 h-6 flex-shrink-0" fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M224,115.55V208a16,16,0,0,1-16,16H168a16,16,0,0,1-16-16V168a8,8,0,0,0-8-8H112a8,8,0,0,0-8,8v40a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V115.55a16,16,0,0,1,5.17-11.78l80-75.48.11-.11a16,16,0,0,1,21.53,0,1.14,1.14,0,0,0,.11.11l80,75.48A16,16,0,0,1,224,115.55Z"></path></svg>
+                    <span class="sidebar-text font-medium whitespace-nowrap">Dashboard</span>
+                </a>
+                <div x-data="{ open: true }">
+                    <button @click="open = !open" class="sidebar-item-active w-full flex items-center justify-between gap-4 px-4 py-2.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-active)]">
+                        <div class="flex items-center gap-4">
+                            <svg class="w-6 h-6 flex-shrink-0 text-[var(--text-secondary)]" fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M216,112a8,8,0,0,1-8,8H179.32l28.82,28.82a8,8,0,0,1-11.32,11.32L168,131.32V160a8,8,0,0,1-16,0V131.32L123.18,159.14a8,8,0,0,1-11.32-11.32L140.68,120H112a8,8,0,0,1,0-16h28.68L111.86,65.18a8,8,0,0,1,11.32-11.32L152,82.68V56a8,8,0,0,1,16,0v26.68l28.82-28.82a8,8,0,0,1,11.32,11.32L179.32,96H208A8,8,0,0,1,216,112Zm-78.63,94.63a8,8,0,0,0-11.31,0L32.85,249.85a8,8,0,0,0,5.66,13.66h.34A8,8,0,0,0,44.5,261l93.22-93.23a8,8,0,0,0,0-11.31ZM96,152a56,56,0,1,0-56-56A56.06,56.06,0,0,0,96,152Zm0-96a40,40,0,1,1-40,40A40.05,40.05,0,0,1,96,56Z"></path></svg>
+                            <span class="sidebar-text font-medium whitespace-nowrap">System Settings</span>
+                        </div>
+                        <svg :class="{'rotate-180': open}" class="dropdown-icon w-5 h-5 flex-shrink-0 transition-transform" fill="currentColor" height="20" viewBox="0 0 256 256" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path></svg>
+                    </button>
+                    <div class="pl-10 space-y-1 mt-1 overflow-hidden" x-show="open">
+                        <a class="block px-4 py-2 text-sm rounded-md text-[var(--text-secondary)] hover:bg-[var(--primary-color)] hover:text-[var(--text-active)]" href="#config-panel">System Configuration</a>
+                        <a class="block px-4 py-2 text-sm rounded-md text-[var(--text-secondary)] hover:bg-[var(--primary-color)] hover:text-[var(--text-active)]" href="#users-panel">User & Role Provisioning</a>
+                        <a class="block px-4 py-2 text-sm rounded-md text-[var(--text-secondary)] hover:bg-[var(--primary-color)] hover:text-[var(--text-active)]" href="#modules-panel">Module Activation</a>
+                        <a class="block px-4 py-2 text-sm rounded-md text-[var(--text-secondary)] hover:bg-[var(--primary-color)] hover:text-[var(--text-active)]" href="#security-panel">Security Management</a>
+                    </div>
+                </div>
+                <a class="sidebar-item flex items-center gap-4 px-4 py-2.5 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-active)]" href="{% url 'panel:customer-management' %}">
+                    <svg class="w-6 h-6 flex-shrink-0" fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"></path></svg>
+                    <span class="sidebar-text font-medium whitespace-nowrap">Customer Management</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main :class="isSidebarExpanded ? 'ml-72' : 'ml-[88px]'" class="flex-1 transition-all duration-300 p-4 lg:p-8 bg-gray-100">
+            <div class="container-fluid">
+                <!-- Page Title -->
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">System Settings</h1>
+                </div>
+
+                <!-- Tab Navigation for System Settings -->
+                <div class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" id="systemSettingsTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="config-tab" data-bs-toggle="tab" data-bs-target="#config-panel" type="button" role="tab" aria-controls="config-panel" aria-selected="false"><i class="fas fa-cogs me-2"></i>System Configuration</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users-panel" type="button" role="tab" aria-controls="users-panel" aria-selected="true"><i class="fas fa-users-cog me-2"></i>User & Role Provisioning</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="modules-tab" data-bs-toggle="tab" data-bs-target="#modules-panel" type="button" role="tab" aria-controls="modules-panel" aria-selected="false"><i class="fas fa-toggle-on me-2"></i>Module Activation</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-panel" type="button" role="tab" aria-controls="security-panel" aria-selected="false"><i class="fas fa-shield-alt me-2"></i>Security Management</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content" id="systemSettingsTabsContent">
+                            <!-- System Configuration Panel -->
+                            <div class="tab-pane fade" id="config-panel" role="tabpanel" aria-labelledby="config-tab">
+                                <h5 class="card-title mb-4">System Configuration</h5>
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <h6>Maintenance & Backup</h6>
+                                        <p class="text-muted small">Configure automated system maintenance and data backup schedules as per the SA&D document.</p>
+                                        <div class="d-flex flex-column gap-3">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <label for="backupSchedule" class="form-label">Backup Frequency</label>
+                                                    <select class="form-select" id="backupSchedule">
+                                                        <option>Daily</option>
+                                                        <option selected>Weekly</option>
+                                                        <option>Monthly</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <button class="btn btn-primary"><i class="fas fa-database me-2"></i>Run Manual Backup</button>
+                                            <button class="btn btn-secondary"><i class="fas fa-cogs me-2"></i>Check for Software Updates</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>Third-Party Integrations</h6>
+                                        <p class="text-muted small">Manage integrations with external services like payment gateways and email servers.</p>
+                                         <div class="card">
+                                            <div class="card-body">
+                                                <form>
+                                                    <div class="mb-3">
+                                                        <label for="smtpServer" class="form-label">Email Server (SMTP)</label>
+                                                        <input type="text" class="form-control" id="smtpServer" placeholder="smtp.example.com">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="paymentGateway" class="form-label">Payment Gateway API Key</label>
+                                                        <input type="password" class="form-control" id="paymentGateway" placeholder="••••••••••••••••••••">
+                                                    </div>
+                                                    <button type="submit" class="btn btn-success">Save Integrations</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- User & Role Provisioning Panel -->
+                            <div class="tab-pane fade show active" id="users-panel" role="tabpanel" aria-labelledby="users-tab">
+                                <h5 class="card-title mb-3">User & Role Provisioning</h5>
+                                <p class="text-muted small mb-3">Manage all system users and their roles based on the `Users` and `Roles` tables from the database design.</p>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="input-group" style="width: 300px;">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                        <input type="text" id="userSearchInput" class="form-control" placeholder="Search Users...">
+                                    </div>
+                                    <div class="btn-group">
+                                        <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#addRoleModal"><i class="fas fa-plus-circle me-2"></i>Add New Role</button>
+                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="fas fa-user-plus me-2"></i>Add New User</button>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>UserID</th>
+                                                <th>Username</th>
+                                                <th>Role</th>
+                                                <th>Department</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="userTableBody">
+                                            {% for user in users %}
+                                            <tr id="user-row-{{ user.userid }}">
+                                                <td>{{ user.userid }}</td>
+                                                <td>{{ user.username|default:"N/A" }}</td>
+                                                <td>{{ user.roleid.rolename|default:"N/A" }}</td>
+                                                <td>
+                                                    {% if user.departmentid %}
+                                                        {{ user.departmentid.departmentname|default:"N/A" }}
+                                                    {% else %}
+                                                        N/A
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if user.status == 'Active' %}
+                                                        <span class="badge bg-success">Active</span>
+                                                    {% elif user.status == 'Inactive' %}
+                                                        <span class="badge bg-secondary">Inactive</span>
+                                                    {% else %}
+                                                        <span class="badge bg-warning text-dark">{{ user.status|default:"Unknown" }}</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary me-1" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#editUserModal" 
+                                                            data-userid="{{ user.userid }}" 
+                                                            data-username="{{ user.username }}"
+                                                            data-email="{{ user.email }}"
+                                                            data-role="{{ user.roleid.rolename }}"
+                                                            data-department="{% if user.departmentid %}{{ user.departmentid.departmentname }}{% else %}None{% endif %}"
+                                                            data-status="{{ user.status }}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-outline-danger" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#deleteUserModal" 
+                                                            data-userid="{{ user.userid }}" 
+                                                            data-username="{{ user.username }}">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr>
+                                                <td colspan="6" class="text-center p-4">No users found in the database.</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Module Activation Panel -->
+                            <div class="tab-pane fade" id="modules-panel" role="tabpanel" aria-labelledby="modules-tab">
+                                <h5 class="card-title mb-3">Module Activation</h5>
+                                <p class="text-muted small">Activate or deactivate system modules across PRISM as per the business requirements.</p>
+                                <div class="list-group">
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Customer Management (CRM)</h6>
+                                            <small>Manages customer data, interactions, and sales pipelines.</small>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="moduleCRM" checked>
+                                            <label class="form-check-label" for="moduleCRM">Enabled</label>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Service Management</h6>
+                                            <small>Handles ticketing, support requests, and troubleshooting workflows.</small>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="moduleService" checked>
+                                            <label class="form-check-label" for="moduleService">Enabled</label>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Store & Inventory</h6>
+                                            <small>Manages assets, stock levels, procurement, and inventory movements.</small>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="moduleInventory" checked>
+                                            <label class="form-check-label" for="moduleInventory">Enabled</label>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Human Resources (HRM)</h6>
+                                            <small>Manages employee lifecycle, payroll, and compliance.</small>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="moduleHRM">
+                                            <label class="form-check-label" for="moduleHRM">Disabled</label>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">Financial Management</h6>
+                                            <small>Manages all financial transactions, budgeting, and reporting.</small>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="moduleFinance" checked>
+                                            <label class="form-check-label" for="moduleFinance">Enabled</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Security Management Panel -->
+                            <div class="tab-pane fade" id="security-panel" role="tabpanel" aria-labelledby="security-tab">
+                                <h5 class="card-title mb-3">Security Management</h5>
+                                <p class="text-muted small">Configure firewalls, manage role-based access levels, and monitor system-wide security logs.</p>
+                                <div class="row g-4">
+                                    <div class="col-lg-6">
+                                        <h6>Access Control & Permissions</h6>
+                                        <p class="text-muted small">Define what each role can see and do, based on the `Permissions` table.</p>
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label for="roleSelect" class="form-label">Select Role to Configure</label>
+                                                    <select class="form-select" id="roleSelect">
+                                                        <option>HOD</option>
+                                                        <option>Staff</option>
+                                                        <option>Customer</option>
+                                                    </select>
+                                                </div>
+                                                <button class="btn btn-primary"><i class="fas fa-edit me-2"></i>Edit Permissions</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <h6>Recent Audit Log</h6>
+                                        <p class="text-muted small">A live feed of important system events from the `AuditLog` table for compliance and monitoring.</p>
+                                        <div class="table-responsive">
+                                            <table class="table table-hover mb-0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td><span class="badge bg-success">INFO</span></td>
+                                                        <td>User 'sysadmin' logged in</td>
+                                                        <td class="text-muted">1 min ago</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><span class="badge bg-primary">EDIT</span></td>
+                                                        <td>Permissions updated for 'Staff' role</td>
+                                                        <td class="text-muted">5 min ago</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><span class="badge bg-warning">WARN</span></td>
+                                                        <td>Failed login attempt for 'root'</td>
+                                                        <td class="text-muted">12 min ago</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add User Modal -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                        <form id="addUserForm" method="post" action="{% url 'panel:system-settings' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="add_user" value="true">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role</label>
+                            <select class="form-select" id="role" name="role" required>
+                                <option selected disabled value="">Choose...</option>
+                                {% for role in roles %}
+                                    <option value="{{ role.roleid }}">{{ role.rolename }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="department" class="form-label">Department</label>
+                            <select class="form-select" id="department" name="department">
+                                <option selected value="">None</option>
+                                {% for dept in departments %}
+                                    <option value="{{ dept.departmentid }}">{{ dept.departmentname }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="addUserForm" class="btn btn-primary">Save User</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm" method="post" action="{% url 'panel:system-settings' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="edit_user" value="true">
+                        <input type="hidden" id="editUserId" name="user_id">
+                        <div class="mb-3">
+                            <label for="editUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="editUsername" name="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="editEmail" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="editPassword" name="password" placeholder="Leave blank to keep unchanged">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editRole" class="form-label">Role</label>
+                            <select class="form-select" id="editRole" name="role" required>
+                                {% for role in roles %}
+                                    <option value="{{ role.roleid }}">{{ role.rolename }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDepartment" class="form-label">Department</label>
+                            <select class="form-select" id="editDepartment" name="department">
+                                <option value="">None</option>
+                                {% for dept in departments %}
+                                    <option value="{{ dept.departmentid }}">{{ dept.departmentname }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editStatus" class="form-label">Status</label>
+                            <select class="form-select" id="editStatus" name="status" required>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="editUserForm" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete User Modal -->
+    <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteUserModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the user <strong id="deleteUsername"></strong>? This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Confirm Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Role Modal -->
+    <div class="modal fade" id="addRoleModal" tabindex="-1" aria-labelledby="addRoleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addRoleModalLabel">Add New Role</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addRoleForm" method="post" action="{% url 'panel:system-settings' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="add_role" value="true">
+                        <div class="mb-3">
+                            <label for="roleName" class="form-label">Role Name</label>
+                            <input type="text" class="form-control" id="roleName" name="role_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="roleDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="roleDescription" name="description" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="addRoleForm" class="btn btn-primary">Save Role</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- AlpineJS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Edit User Modal
+            const editUserModal = document.getElementById('editUserModal');
+            if (editUserModal) {
+                editUserModal.addEventListener('show.bs.modal', event => {
+                    const button = event.relatedTarget;
+                    const userId = button.getAttribute('data-userid');
+                    const username = button.getAttribute('data-username');
+                    const email = button.getAttribute('data-email');
+                    const role = button.getAttribute('data-role');
+                    const department = button.getAttribute('data-department');
+                    const status = button.getAttribute('data-status');
+
+                    editUserModal.querySelector('.modal-title').textContent = `Edit User: ${username}`;
+                    editUserModal.querySelector('#editUserId').value = userId;
+                    editUserModal.querySelector('#editUsername').value = username;
+                    editUserModal.querySelector('#editEmail').value = email;
+                    editUserModal.querySelector('#editRole').value = role;
+                    editUserModal.querySelector('#editDepartment').value = department || '';
+                    editUserModal.querySelector('#editStatus').value = status;
+                });
+            }
+
+            // Delete User Modal
+            const deleteUserModal = document.getElementById('deleteUserModal');
+            if (deleteUserModal) {
+                let userIdToDelete = null;
+                deleteUserModal.addEventListener('show.bs.modal', event => {
+                    const button = event.relatedTarget;
+                    userIdToDelete = button.getAttribute('data-userid');
+                    const username = button.getAttribute('data-username');
+                    deleteUserModal.querySelector('#deleteUsername').textContent = `'${username}'`;
+                });
+
+                const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+                confirmDeleteBtn.addEventListener('click', () => {
+                    if (userIdToDelete) {
+                        const formData = new FormData();
+                        formData.append('delete_user', 'true');
+                        formData.append('user_id', userIdToDelete);
+
+                        fetch('{% url 'panel:system-settings' %}', {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            }
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                const userRow = document.getElementById(`user-row-${userIdToDelete}`);
+                                if (userRow) userRow.remove();
+                                bootstrap.Modal.getInstance(deleteUserModal).hide();
+                                userIdToDelete = null;
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                    }
+                });
+            }
+
+            // Live Search for Users
+            const searchInput = document.getElementById('userSearchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function () {
+                    const filter = searchInput.value.toLowerCase();
+                    const tableBody = document.getElementById('userTableBody');
+                    const rows = tableBody.getElementsByTagName('tr');
+
+                    for (let i = 0; i < rows.length; i++) {
+                        const usernameCell = rows[i].getElementsByTagName('td')[1];
+                        const roleCell = rows[i].getElementsByTagName('td')[2];
+                        const departmentCell = rows[i].getElementsByTagName('td')[3];
+                        if (usernameCell || roleCell || departmentCell) {
+                            const username = usernameCell.textContent || usernameCell.innerText;
+                            const role = roleCell.textContent || roleCell.innerText;
+                            const department = departmentCell.textContent || departmentCell.innerText;
+                            
+                            if (username.toLowerCase().indexOf(filter) > -1 || role.toLowerCase().indexOf(filter) > -1 || department.toLowerCase().indexOf(filter) > -1) {
+                                rows[i].style.display = "";
+                            } else {
+                                rows[i].style.display = "none";
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+    
+</body>
+</html>

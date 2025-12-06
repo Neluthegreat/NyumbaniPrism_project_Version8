@@ -1,0 +1,189 @@
+{% extends 'memberofmaintenance/base.html' %}
+
+{% block content %}
+
+<!-- 
+    This page uses Alpine.js for interactivity (switching views, calendar functions).
+    The data is currently static but can be replaced by passing context from your Django view.
+-->
+<div x-data="maintenanceState()">
+
+    <!-- Page Header -->
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold">Scheduled Maintenance</h1>
+        <div class="flex items-center space-x-2">
+            <button @click="maintenanceView = 'calendar'" :class="{ 'bg-blue-600 text-white': maintenanceView === 'calendar', 'bg-white text-gray-700': maintenanceView !== 'calendar' }" class="px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-500 hover:text-white transition">
+                <span class="material-icons text-sm">calendar_today</span>
+                <span>Calendar View</span>
+            </button>
+            <button @click="maintenanceView = 'list'" :class="{ 'bg-blue-600 text-white': maintenanceView === 'list', 'bg-white text-gray-700': maintenanceView !== 'list' }" class="px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-500 hover:text-white transition">
+                <span class="material-icons text-sm">list</span>
+                <span>List View</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Calendar View -->
+    <div x-show="maintenanceView === 'calendar'" class="bg-white p-4 rounded-lg shadow" x-cloak>
+        <div class="flex items-center justify-between mb-4">
+            <button @click="previousMonth()" class="p-2 rounded-full hover:bg-gray-100"><span class="material-icons">chevron_left</span></button>
+            <h2 class="text-xl font-semibold" x-text="`${monthNames[currentMonth]} ${currentYear}`"></h2>
+            <button @click="nextMonth()" class="p-2 rounded-full hover:bg-gray-100"><span class="material-icons">chevron_right</span></button>
+        </div>
+        <div class="grid grid-cols-7 gap-1 text-center font-semibold text-gray-600">
+            <div class="py-2">Sun</div><div class="py-2">Mon</div><div class="py-2">Tue</div><div class="py-2">Wed</div><div class="py-2">Thu</div><div class="py-2">Fri</div><div class="py-2">Sat</div>
+        </div>
+        <div class="grid grid-cols-7 gap-1" style="min-height: 500px;">
+            <template x-for="day in calendarDays" :key="day.date">
+                <div class="border rounded-md p-2 h-28 flex flex-col" :class="{'bg-gray-50': !day.isCurrentMonth}">
+                    <span class="font-medium" :class="{'text-gray-400': !day.isCurrentMonth, 'text-blue-600': day.isToday}" x-text="day.day"></span>
+                    <div class="mt-1 space-y-1 overflow-y-auto">
+                        <template x-for="task in getTasksForDay(day.date)">
+                            <div class="text-white text-xs p-1 rounded-md cursor-pointer truncate" :class="{
+                                'bg-blue-500 hover:bg-blue-600': task.status === 'Scheduled',
+                                'bg-orange-500 hover:bg-orange-600': task.status === 'In Progress',
+                                'bg-green-500 hover:bg-green-600': task.status === 'Completed'
+                            }">
+                                <span x-text="task.name"></span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <!-- List View -->
+    <div x-show="maintenanceView === 'list'" x-cloak>
+        <div class="bg-white p-4 rounded-lg shadow mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <input type="text" placeholder="Search Task or Asset..." x-model="listSearch" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select x-model="statusFilter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">All Statuses</option><option>Scheduled</option><option>In Progress</option><option>Completed</option><option>Postponed</option>
+                </select>
+                <input type="date" x-model="startDateFilter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="date" x-model="endDateFilter" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow overflow-x-auto">
+            <table class="min-w-full">
+                <thead class="bg-gray-50"><tr><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Task Name</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Associated Asset</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned To</th></tr></thead>
+                <tbody class="divide-y divide-gray-200">
+                    
+                    <!-- 
+                        DJANGO FOR LOOP - LATER
+                        Replace the static rows below with a loop when you pass data from your view:
+                        {% for task in tasks %}
+                            ...
+                        {% endfor %}
+                    -->
+
+                    <!-- Static Example Row 1 -->
+                    <tr class="hover:bg-gray-50 cursor-pointer">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">Quarterly Server Patching</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Main Web Server</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Aug 25, 2025</td>
+                        <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Scheduled</span></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Alice Stone</td>
+                    </tr>
+                    <!-- Static Example Row 2 -->
+                    <tr class="hover:bg-gray-50 cursor-pointer">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">Monthly Backup Verification</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">APP-SRV-05</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Aug 15, 2025</td>
+                        <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completed</span></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Bob Johnson</td>
+                    </tr>
+                     <!-- Static Example Row 3 -->
+                    <tr class="hover:bg-gray-50 cursor-pointer">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">Firewall Firmware Update</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Firewall-01</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Aug 20, 2025</td>
+                        <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">In Progress</span></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Charlie Davis</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Alpine.js script for the interactive components of this page -->
+<script>
+    function maintenanceState() {
+        // Mock data. In Django, you would pass this data into the template as a JSON object.
+        const tasks = [
+            { id: 1, name: 'Server Patching', asset: 'Main Web Server', dueDate: '2025-08-25T10:00:00', status: 'Scheduled', assignedTo: 'Alice Stone' },
+            { id: 2, name: 'Backup Check', asset: 'APP-SRV-05', dueDate: '2025-08-15T14:00:00', status: 'Completed', assignedTo: 'Bob Johnson' },
+            { id: 3, name: 'Firewall Update', asset: 'Firewall-01', dueDate: '2025-08-20T11:00:00', status: 'In Progress', assignedTo: 'Charlie Davis' },
+            { id: 4, name: 'Security Audit', asset: 'Cisco Catalyst 9300', dueDate: '2025-09-05T09:00:00', status: 'Scheduled', assignedTo: 'Alice Stone' },
+        ];
+
+        return {
+            maintenanceView: 'calendar',
+            currentMonth: new Date().getMonth(),
+            currentYear: new Date().getFullYear(),
+            monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+            calendarDays: [],
+            maintenanceTasks: tasks,
+            
+            // List view filters
+            statusFilter: '', 
+            startDateFilter: '', 
+            endDateFilter: '', 
+            listSearch: '',
+
+            init() {
+                this.generateCalendarDays();
+                this.$watch('currentMonth', () => this.generateCalendarDays());
+                this.$watch('currentYear', () => this.generateCalendarDays());
+            },
+
+            generateCalendarDays() {
+                this.calendarDays = [];
+                const date = new Date(this.currentYear, this.currentMonth, 1);
+                const firstDayIndex = date.getDay();
+                const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
+                const lastDayOfMonth = lastDay.getDate();
+                const prevLastDay = new Date(this.currentYear, this.currentMonth, 0).getDate();
+
+                for (let x = firstDayIndex; x > 0; x--) {
+                    this.calendarDays.push({ date: new Date(this.currentYear, this.currentMonth - 1, prevLastDay - x + 1).toISOString().split('T')[0], day: prevLastDay - x + 1, isCurrentMonth: false, isToday: false });
+                }
+                for (let i = 1; i <= lastDayOfMonth; i++) {
+                    const today = new Date();
+                    this.calendarDays.push({ date: new Date(this.currentYear, this.currentMonth, i).toISOString().split('T')[0], day: i, isCurrentMonth: true, isToday: i === today.getDate() && this.currentMonth === today.getMonth() && this.currentYear === today.getFullYear() });
+                }
+                const remainingDays = 42 - this.calendarDays.length; // Fill up to 6 weeks
+                for (let j = 1; j <= remainingDays; j++) {
+                    this.calendarDays.push({ date: new Date(this.currentYear, this.currentMonth + 1, j).toISOString().split('T')[0], day: j, isCurrentMonth: false, isToday: false });
+                }
+            },
+
+            previousMonth() {
+                if (this.currentMonth === 0) {
+                    this.currentMonth = 11;
+                    this.currentYear--;
+                } else {
+                    this.currentMonth--;
+                }
+            },
+
+            nextMonth() {
+                if (this.currentMonth === 11) {
+                    this.currentMonth = 0;
+                    this.currentYear++;
+                } else {
+                    this.currentMonth++;
+                }
+            },
+
+            getTasksForDay(date) {
+                return this.maintenanceTasks.filter(task => task.dueDate.startsWith(date));
+            },
+        }
+    }
+</script>
+
+{% endblock %}

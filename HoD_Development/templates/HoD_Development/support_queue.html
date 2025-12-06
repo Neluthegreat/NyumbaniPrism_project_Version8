@@ -1,0 +1,80 @@
+{% extends 'HoD_Development/base.html' %}
+
+{% block title %}Support & Maintenance Queue{% endblock %}
+
+{% block content %}
+<div id="support-queue-view">
+    <header class="mb-8">
+        <nav class="text-sm font-medium text-gray-500 mb-2">
+            <a class="hover:text-blue-600 cursor-pointer" href="{% url 'HoD_Development:service_management' %}">Service Management</a>
+            <span class="mx-2">&gt;</span>
+            <span class="text-gray-700">Support &amp; Maintenance Queue</span>
+        </nav>
+        <h1 class="text-3xl font-bold text-gray-900">Support &amp; Maintenance Queue</h1>
+    </header>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-gray-500 text-sm font-medium">Total Open Tickets</h3>
+            <p class="text-3xl font-bold text-gray-800 mt-2">87</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-gray-500 text-sm font-medium">Unassigned Tickets</h3>
+            <p class="text-3xl font-bold text-yellow-600 mt-2">15</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-gray-500 text-sm font-medium">SLA Breaches</h3>
+            <p class="text-3xl font-bold text-red-600 mt-2">5</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-gray-500 text-sm font-medium">Avg. Resolution Time</h3>
+            <p class="text-3xl font-bold text-gray-800 mt-2">3.2 Days</p>
+        </div>
+    </div>
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <table class="w-full text-left">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider">Ticket ID</th>
+                    <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider">Subject</th>
+                    <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider">Client/User</th>
+                    <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider">Priority</th>
+                    <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider">Status</th>
+                    <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider">Assignee</th>
+                    <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider">Created Date</th>
+                    <th class="p-4 text-sm font-semibold text-gray-600 tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                <!-- In a real app, this table body would be generated with a Django for loop -->
+                <tr class="hover:bg-gray-50">
+                    <td class="p-4 font-medium text-gray-800">#78345</td>
+                    <td class="p-4 text-gray-800">Cannot access reporting module</td>
+                    <td class="p-4 text-gray-600">John Doe (Global Tech)</td>
+                    <td class="p-4">
+                        <span class="flex items-center text-red-600 font-semibold">
+                            <span class="material-icons text-red-500 text-base mr-1">local_fire_department</span>
+                            High
+                        </span>
+                    </td>
+                    <td class="p-4"><span class="px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Open</span></td>
+                    <td class="p-4 text-gray-600">Sarah Chen</td>
+                    <td class="p-4 text-gray-600">2023-11-01</td>
+                    <td class="p-4 relative">
+                        <div class="group inline-block">
+                            <button class="text-gray-500 hover:text-gray-700">
+                                <span class="material-icons">more_horiz</span>
+                            </button>
+                            <div class="absolute right-8 mt-2 w-48 bg-white rounded-md shadow-lg z-10 hidden group-hover:block">
+                                <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" href="#">Assign</a>
+                                <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" href="#">Set Priority</a>
+                                <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" href="#" onclick="openTicketDetails()">View Details</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                 <!-- ... Other table rows from original HTML go here ... -->
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'hod_of_human_resources/base.html' %}
+{% load static %}
+
+{% block title %}View Policy - PRISM HR{% endblock %}
+{% block active_view %}hrManagement{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+            <h1 class="text-2xl font-bold text-gray-900">{{ policy.title }}</h1>
+            <p class="mt-1 text-sm text-gray-600">
+                Version {{ policy.version }} - Status: <span class="{% if policy.status == 'active' %}text-green-600{% elif policy.status == 'draft' %}text-yellow-600{% else %}text-red-600{% endif %}">{{ policy.status|title }}</span>
+            </p>
+        </div>
+
+        <div class="px-6 py-6">
+            <div class="mb-6">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Policy Content</h2>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="prose max-w-none">
+                        {{ policy.content|linebreaks }}
+                    </div>
+                </div>
+            </div>
+
+            {% if policy.document %}
+            <div class="mb-6">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Attached Document</h2>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <a href="{{ policy.document.url }}" target="_blank" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
+                        </svg>
+                        View PDF Document
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="mb-6">
+                <h2 class="text-lg font-medium text-gray-900 mb-4">Policy Details</h2>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <dl class="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Created By</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ policy.created_by.username if policy.created_by else 'N/A' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Created At</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ policy.created_at|date:"M d, Y H:i" if policy.created_at else 'N/A' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Last Updated</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ policy.updated_at|date:"M d, Y H:i" if policy.updated_at else 'N/A' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Version</dt>
+                            <dd class="mt-1 text-sm text-gray-900">{{ policy.version }}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <a href="{% url 'hod_of_human_resources:hr_management' %}?tab=policy" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Back to Policies
+                </a>
+                <a href="{% url 'hod_of_human_resources:edit_policy' policy.policy_id %}" class="bg-blue-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Edit Policy
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

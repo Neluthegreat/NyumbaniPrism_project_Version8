@@ -1,0 +1,79 @@
+{% extends 'Developer_staff/base_developer.html' %}
+
+{% block title %}Log Time Entry{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-800">Log a New Time Entry</h1>
+    <p class="mt-2 text-gray-600">Fill out the details for the work you performed.</p>
+
+    <!-- The 'action' can be empty because we are posting to the same URL -->
+    <form method="POST" class="mt-8 bg-white p-8 rounded-lg shadow-sm space-y-6">
+        <!-- Django requires this for security -->
+        {% csrf_token %}
+
+        <div>
+            <label for="{{ form.project.id_for_label }}" class="block text-sm font-medium text-gray-700">Project</label>
+            {{ form.project }}
+        </div>
+
+        <div>
+            <label for="{{ form.task.id_for_label }}" class="block text-sm font-medium text-gray-700">Task</label>
+            {{ form.task }}
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label for="{{ form.date.id_for_label }}" class="block text-sm font-medium text-gray-700">Date</label>
+                {{ form.date }}
+            </div>
+            
+            <!-- THIS IS THE CORRECTED BLOCK FOR THE DURATION FIELD -->
+            <div>
+                <label for="{{ form.duration_str.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.duration_str.label }}</label>
+                {{ form.duration_str }}
+                {% if form.duration_str.help_text %}
+                    <p class="mt-2 text-sm text-gray-500">{{ form.duration_str.help_text }}</p>
+                {% endif %}
+            </div>
+            
+        </div>
+
+        <div>
+            <label for="{{ form.notes.id_for_label }}" class="block text-sm font-medium text-gray-700">Notes</label>
+            {{ form.notes }}
+        </div>
+
+        <!-- Display any form errors here -->
+        {% if form.errors %}
+            <div class="p-4 bg-red-50 text-red-700 rounded-lg">
+                <p class="font-bold">Please correct the errors below:</p>
+                <ul class="list-disc list-inside mt-2">
+                {% for field, error_list in form.errors.items %}
+                    {% for error in error_list %}
+                        <li>
+                            <!-- This makes sure the error message for our custom field is clean -->
+                            {% if field == 'duration_str' %}
+                                Duration:
+                            {% else %}
+                                {{ field|capfirst }}:
+                            {% endif %} 
+                            {{ error }}
+                        </li>
+                    {% endfor %}
+                {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <div class="pt-4 flex justify-end space-x-3">
+            <a href="{% url 'Developer_staff:time_tracking' %}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">
+                Cancel
+            </a>
+            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                Save Entry
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

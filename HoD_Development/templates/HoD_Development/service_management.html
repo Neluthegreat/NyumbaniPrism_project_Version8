@@ -1,0 +1,58 @@
+{% extends 'HoD_Development/base.html' %}
+
+{% block title %}Service Management{% endblock %}
+
+{% block content %}
+<div id="service-management-view">
+    <header class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Service Management</h1>
+        <p class="text-gray-500 mt-1">Oversee project pipelines, active projects, support queues, and deployments.</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Project Pipeline Card -->
+        <a href="{% url 'HoD_Development:pipeline' %}" class="group bg-white p-6 rounded-lg shadow-md hover:shadow-xl hover:bg-blue-50 transition-all duration-300 flex items-center space-x-6">
+            <div class="bg-blue-100 p-4 rounded-full">
+                <span class="material-icons text-4xl text-blue-600">filter_list</span>
+            </div>
+            <div>
+                <h2 class="text-xl font-semibold text-gray-800">Project Pipeline</h2>
+                <p class="text-gray-500 mt-1">Review new opportunities and technical assessments.</p>
+            </div>
+        </a>
+
+        <!-- Active Projects Dashboard Card -->
+        <a href="{% url 'HoD_Development:projects_dashboard' %}" class="group bg-white p-6 rounded-lg shadow-md hover:shadow-xl hover:bg-green-50 transition-all duration-300 flex items-center space-x-6">
+            <div class="bg-green-100 p-4 rounded-full">
+                <span class="material-icons text-4xl text-green-600">assessment</span>
+            </div>
+            <div>
+                <h2 class="text-xl font-semibold text-gray-800">Active Projects</h2>
+                <p class="text-gray-500 mt-1">Track the health and progress of all active projects.</p>
+            </div>
+        </a>
+
+        <!-- Support & Maintenance Queue Card -->
+        <a href="{% url 'HoD_Development:support_queue' %}" class="group bg-white p-6 rounded-lg shadow-md hover:shadow-xl hover:bg-red-50 transition-all duration-300 flex items-center space-x-6">
+            <div class="bg-red-100 p-4 rounded-full">
+                <span class="material-icons text-4xl text-red-600">support_agent</span>
+            </div>
+            <div>
+                <h2 class="text-xl font-semibold text-gray-800">Support Queue</h2>
+                <p class="text-gray-500 mt-1">Manage all incoming client support tickets.</p>
+            </div>
+        </a>
+
+        <!-- Deployment Coordination Card -->
+        <a href="{% url 'HoD_Development:deployment_schedule' %}" class="group bg-white p-6 rounded-lg shadow-md hover:shadow-xl hover:bg-purple-50 transition-all duration-300 flex items-center space-x-6">
+            <div class="bg-purple-100 p-4 rounded-full">
+                <span class="material-icons text-4xl text-purple-600">rocket_launch</span>
+            </div>
+            <div>
+                <h2 class="text-xl font-semibold text-gray-800">Deployments</h2>
+                <p class="text-gray-500 mt-1">Coordinate and view the deployment schedule.</p>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}

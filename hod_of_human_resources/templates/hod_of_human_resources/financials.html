@@ -1,0 +1,130 @@
+{% extends 'hod_of_human_resources/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Financials - PRISM HR{% endblock %}
+{% block active_view %}financials{% endblock %}
+
+{% block content %}
+<!-- Financials View -->
+<div x-show="activeView === 'financials'" x-cloak>
+    <div class="container-fluid">
+        <header class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">Financials</h1>
+                <p class="text-gray-500 mt-1">Manage HR budget, review payroll, and track departmental spending.</p>
+            </div>
+            <form method="post" action="{% url 'hod_of_human_resources:generate_financial_report' %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary d-flex align-items-center">
+                    <i class="bi bi-file-earmark-text me-2"></i> Generate New Report
+                </button>
+            </form>
+        </header>
+
+        <!-- KPI Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm border-light">
+                    <div class="card-body">
+                        <h5 class="card-title text-secondary">Annual HR Budget</h5>
+                        <p class="card-text fs-4 fw-bold">TZS {{ annual_budget|floatformat:0|intcomma }}/=</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm border-light">
+                    <div class="card-body">
+                        <h5 class="card-title text-secondary">YTD Utilization</h5>
+                        <p class="card-text fs-4 fw-bold">{{ budget_utilization }}%</p>
+                        <div class="progress mt-2" style="height: 10px;">
+                            <div class="progress-bar" role="progressbar" style="width: {{ budget_utilization }}%;" aria-valuenow="{{ budget_utilization }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm border-light">
+                    <div class="card-body">
+                        <h5 class="card-title text-secondary">Last Month's Payroll</h5>
+                        <p class="card-text fs-4 fw-bold">TZS 93,750,000/=</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 shadow-sm border-light">
+                    <div class="card-body">
+                        <h5 class="card-title text-secondary">Pending Deductions</h5>
+                        <p class="card-text fs-4 fw-bold">TZS 250,000/=</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Budget and Payroll Sections -->
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="card shadow-sm border-light">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0"><i class="bi bi-pie-chart-fill me-2"></i>HR Budget Breakdown</h5>
+                        <a href="{% url 'hod_of_human_resources:request_budget_adjustment' %}" class="btn btn-sm btn-outline-primary">Request Adjustment</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Category</th>
+                                    <th class="text-end">Budgeted (TZS)</th>
+                                    <th class="text-end">Actual Spend (TZS)</th>
+                                    <th class="text-end">Variance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for category, data in budget_breakdown.items %}
+                                <tr>
+                                    <td>{{ category }}</td>
+                                    <td class="text-end">{{ data.budgeted|floatformat:0|intcomma }}/=</td>
+                                    <td class="text-end">{{ data.actual|floatformat:0|intcomma }}/=</td>
+                                    <td class="text-end {% if data.variance > 0 %}text-success{% else %}text-danger{% endif %}">
+                                        {% if data.variance > 0 %}+{% endif %}{{ data.variance|floatformat:0|intcomma }}/=
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card shadow-sm border-light">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0"><i class="bi bi-file-earmark-spreadsheet-fill me-2"></i>Payroll & Resource Deductions</h5>
+                        <a href="{% url 'hod_of_human_resources:payment_page' %}" class="btn btn-sm btn-outline-primary">Process Payments</a>
+                    </div>
+                    <div class="card-body">
+                        <h6>Payment Reports</h6>
+                        <div class="d-flex gap-2 mb-3">
+                            <a href="{% url 'hod_of_human_resources:export_payment_report_pdf' %}" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-file-earmark-pdf"></i> Export PDF
+                            </a>
+                            <a href="{% url 'hod_of_human_resources:export_payment_report_excel' %}" class="btn btn-sm btn-outline-success">
+                                <i class="bi bi-file-earmark-excel"></i> Export Excel
+                            </a>
+                        </div>
+                        <h6>Recent Payroll Reports</h6>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">July 2025 Report <span class="badge bg-success">Approved</span> <a href="#"><i class="bi bi-download"></i></a></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">June 2025 Report <span class="badge bg-success">Approved</span> <a href="#"><i class="bi bi-download"></i></a></li>
+                        </ul>
+                        <h6 class="mt-4">Pending Resource Deductions</h6>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">E. Johnson - Overused Stationery <span class="fw-bold">15,000/=</span></li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">A. Williams - Damaged Equipment <span class="fw-bold">235,000/=</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends 'hod_of_human_resources/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - PRISM HR{% endblock %}
+{% block active_view %}dashboard{% endblock %}
+
+{% block content %}
+<!-- Dashboard View -->
+<div x-show="activeView === 'dashboard'" x-cloak>
+    <header class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">HR Manager Dashboard</h1>
+            <p class="text-gray-500 mt-1">Strategic oversight of all People Operations.</p>
+        </div>
+        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-transform transform hover:scale-105 duration-300 flex items-center space-x-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>New HR Initiative</span>
+        </button>
+    </header>
+    
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow duration-300">
+            <h3 class="text-gray-500 font-medium mb-2 text-sm">Total Headcount</h3>
+            <p class="text-3xl font-bold text-gray-800">{{ total_headcount }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow duration-300">
+            <h3 class="text-gray-500 font-medium mb-2 text-sm">Open Job Requisitions</h3>
+            <p class="text-3xl font-bold text-blue-600">{{ open_requisitions }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow duration-300">
+            <h3 class="text-gray-500 font-medium mb-2 text-sm">Open HR Cases (High Priority)</h3>
+            <p class="text-3xl font-bold text-red-600">{{ high_priority_cases }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-shadow duration-300">
+            <h3 class="text-gray-500 font-medium mb-2 text-sm">Compliance Alerts (Next 30d)</h3>
+            <p class="text-3xl font-bold text-yellow-500">{{ compliance_alerts }}</p>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <h2 class="text-xl font-bold text-gray-800 mb-6">Action Required</h2>
+            <div class="space-y-6">
+                <h3 class="font-semibold text-gray-700">Job Requisition Approvals</h3>
+                <div class="flow-root">
+                    <ul role="list" class="-mb-8">
+                        <li>
+                            <div class="relative pb-8">
+                                <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                                <div class="relative flex space-x-3">
+                                    <div>
+                                        <span class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center ring-8 ring-white">
+                                            <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v4.59L7.3 9.24a.75.75 0 00-1.1 1.02l3.25 3.5a.75.75 0 001.1 0l3.25-3.5a.75.75 0 10-1.1-1.02l-1.95 2.1V6.75z" clip-rule="evenodd" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                        <div>
+                                            <p class="text-sm text-gray-500">New requisition for <a href="#" class="font-medium text-gray-900">Senior Systems Developer</a></p>
+                                            <p class="text-xs text-gray-400">Submitted by HOD of Systems Development</p>
+                                        </div>
+                                        <div class="text-right text-sm whitespace-nowrap text-gray-500"><time>2d ago</time></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="relative pb-8">
+                                <div class="relative flex space-x-3">
+                                    <div>
+                                        <span class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center ring-8 ring-white">
+                                            <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v4.59L7.3 9.24a.75.75 0 00-1.1 1.02l3.25 3.5a.75.75 0 001.1 0l3.25-3.5a.75.75 0 10-1.1-1.02l-1.95 2.1V6.75z" clip-rule="evenodd" />
+                                            </svg>
+                                        </span>
+                                    </div>
+                                    <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                        <div>
+                                            <p class="text-sm text-gray-500">New requisition for <a href="#" class="font-medium text-gray-900">Junior Graphic Designer</a></p>
+                                            <p class="text-xs text-gray-400">Submitted by HOD of Graphics</p>
+                                        </div>
+                                        <div class="text-right text-sm whitespace-nowrap text-gray-500"><time>4d ago</time></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <a href="{% url 'hod_of_human_resources:hr_management' %}?tab=requisition" class="font-semibold text-blue-600 hover:text-blue-800 text-sm">View all pending requisitions →</a>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <h2 class="text-xl font-bold text-gray-800 mb-6">Strategic Actions</h2>
+            <div class="space-y-4">
+                <a href="{% url 'hod_of_human_resources:payment_page' %}" class="w-full flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 3v4"></path>
+                        <path d="M8 3v4"></path>
+                        <path d="M2 11h20"></path>
+                    </svg>
+                    <span>Process Employee Payments</span>
+                </a>
+                <button @click.prevent="activeView = 'hrManagement'; activeHrTab = 'policy'" class="w-full flex items-center justify-center space-x-2 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 rounded-lg border border-gray-300 transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
+                        <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+                        <path d="M10 9H8"></path>
+                        <path d="M16 13H8"></path>
+                        <path d="M16 17H8"></path>
+                    </svg>
+                    <span>Manage HR Policies</span>
+                </button>
+                <button @click.prevent="activeView = 'hrManagement'; activeHrTab = 'succession'" class="w-full flex items-center justify-center space-x-2 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 rounded-lg border border-gray-300 transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m16 16 3-3-3-3"></path>
+                        <path d="m8 8-3 3 3 3"></path>
+                        <path d="m14.5 6 3 12"></path>
+                        <path d="m9.5 6-3 12"></path>
+                    </svg>
+                    <span>Develop Succession Plan</span>
+                </button>
+                <button @click.prevent="activeView = 'analytics'" class="w-full flex items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow-md transition duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                        <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+                    </svg>
+                    <span>View Full HR Analytics</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

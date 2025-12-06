@@ -1,0 +1,26 @@
+{% extends 'HoD_Development/base.html' %}
+
+{% block title %}Store & Inventory{% endblock %}
+
+{% block content %}
+<div id="store-inventory-view">
+    <header class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Store &amp; Inventory</h1>
+        <p class="text-gray-500 mt-1">Technical Assets &amp; Software for the Systems Development Team.</p>
+    </header>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <a class="group bg-white p-6 ... " href="{% url 'HoD_Development:technical_asset_catalog' %}">
+            <span class="material-icons ...">shopping_cart</span>
+            <h2 class="text-xl ...">Browse Technical Asset Catalog</h2>
+            <p class="text-gray-500 mt-1">View all available software, hardware, and services.</p>
+        </a>
+        <a class="group bg-white p-6 ..." href="#" onclick="openRequisitionModal(false)">
+            <span class="material-icons ...">add_circle_outline</span>
+            <h2 class="text-xl ...">Create New Requisition</h2>
+            <p class="text-gray-500 mt-1">Request a new asset that is not in the catalog.</p>
+        </a>
+    </div>
+    <!-- ... Rest of the store inventory content ... -->
+    <a class="block text-right ... " href="{% url 'HoD_Development:my_requisitions' %}">View All My Requisitions</a>
+</div>
+{% endblock %}

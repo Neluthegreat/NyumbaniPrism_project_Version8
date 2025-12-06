@@ -1,0 +1,136 @@
+{% extends 'memberofmaintenance/base.html' %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-800">Analytics & Reporting</h1>
+        <p class="text-lg text-gray-500 mt-1">Key performance metrics and operational insights.</p>
+    </div>
+    <div class="mt-4 sm:mt-0 flex items-center space-x-2">
+        <div class="relative">
+            <select class="w-full pl-3 pr-8 py-2 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option>Last 30 Days</option>
+                <option>Last 60 Days</option>
+                <option>This Quarter</option>
+                <option>This Year</option>
+            </select>
+        </div>
+        <button class="bg-white text-gray-700 px-4 py-2 rounded-lg border hover:bg-gray-50 transition flex items-center space-x-2">
+            <span class="material-icons text-base">download</span>
+            <span>Export</span>
+        </button>
+    </div>
+</div>
+
+<!-- Key Performance Indicator (KPI) Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <p class="text-sm font-medium text-gray-500 uppercase">Avg. Ticket Resolution Time</p>
+        <p class="text-3xl font-bold text-gray-800 mt-2">4.2 Hours</p>
+        <p class="text-sm text-green-600 flex items-center mt-1">
+            <span class="material-icons text-base">arrow_downward</span> 
+            15% improvement
+        </p>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <p class="text-sm font-medium text-gray-500 uppercase">Completed PM Tasks</p>
+        <p class="text-3xl font-bold text-gray-800 mt-2">86</p>
+        <p class="text-sm text-gray-500 flex items-center mt-1">
+            vs. 75 last period
+        </p>
+    </div>
+
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <p class="text-sm font-medium text-gray-500 uppercase">SLA Compliance</p>
+        <p class="text-3xl font-bold text-green-600 mt-2">98.5%</p>
+        <p class="text-sm text-gray-500 flex items-center mt-1">
+            Target: 98%
+        </p>
+    </div>
+    
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <p class="text-sm font-medium text-gray-500 uppercase">Asset Uptime</p>
+        <p class="text-3xl font-bold text-gray-800 mt-2">99.92%</p>
+        <p class="text-sm text-gray-500 flex items-center mt-1">
+           Across all critical assets
+        </p>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+    
+    <!-- Tickets by Priority Chart -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Tickets by Priority</h2>
+        <div class="h-64 flex items-center justify-center bg-gray-50 rounded-md">
+            <p class="text-gray-500">A bar chart showing ticket counts will be rendered here.</p>
+            <!-- In a real implementation, you'd have: <canvas id="ticketsByPriorityChart"></canvas> -->
+        </div>
+    </div>
+
+    <!-- Maintenance Tasks by Status Chart -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Maintenance Tasks by Status</h2>
+        <div class="h-64 flex items-center justify-center bg-gray-50 rounded-md">
+             <p class="text-gray-500">A pie chart showing task statuses will be rendered here.</p>
+             <!-- In a real implementation, you'd have: <canvas id="tasksByStatusChart"></canvas> -->
+        </div>
+    </div>
+</div>
+
+<!-- Detailed Table -->
+<div class="bg-white rounded-lg shadow overflow-x-auto">
+    <div class="p-6">
+        <h2 class="text-xl font-bold text-gray-800">Asset Maintenance Hotspots</h2>
+        <p class="text-gray-500">Assets that have generated the most tickets in the last 30 days.</p>
+    </div>
+    <table class="min-w-full">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset Name</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asset Tag</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ticket Count</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+            
+            <!-- Example Row 1 -->
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">Printer HP Indigo 7900</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">PRN-PUB-001</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Publishing</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600">14</td>
+            </tr>
+            <!-- Example Row 2 -->
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">Main Web Server</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">SRV-WEB-001</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">IT Support</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">8</td>
+            </tr>
+            <!-- Example Row 3 -->
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">Cisco Catalyst 9300</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">NET-SW-003</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Networking</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">5</td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
+
+<!-- 
+    NOTE FOR DEVELOPER:
+    To make the charts interactive, you would typically include a library like Chart.js (https://www.chartjs.org/).
+    You would pass the data for the charts from your Django view as a JSON object and then use JavaScript
+    to find the <canvas> elements and render the charts.
+-->
+
+{% endblock %}

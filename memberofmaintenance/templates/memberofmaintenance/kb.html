@@ -1,0 +1,144 @@
+{% extends 'memberofmaintenance/base.html' %}
+
+{% block content %}
+
+<!-- Knowledge Base Module -->
+<div class="w-full" x-data="knowledgeBaseState()">
+
+    <!-- Breadcrumb Navigation -->
+    <nav class="mb-6 text-sm text-gray-500" aria-label="Breadcrumb" x-show="kbView !== 'main'" x-cloak>
+        <ol class="list-none p-0 inline-flex space-x-2 items-center">
+            <li><a @click.prevent="navigateToBreadcrumb({view: 'main'})" href="#" class="text-blue-600 hover:underline">Knowledge Base</a></li>
+            <template x-if="selectedCategory">
+                <li class="flex items-center">
+                    <span class="material-icons text-xs mx-1">chevron_right</span>
+                    <a @click.prevent="navigateToBreadcrumb({view: 'category', category: selectedCategory})" href="#" :class="{'text-blue-600 hover:underline': selectedArticle, 'text-gray-700 font-semibold': !selectedArticle}" x-text="selectedCategory.name"></a>
+                </li>
+            </template>
+            <template x-if="selectedArticle">
+                <li class="flex items-center">
+                    <span class="material-icons text-xs mx-1">chevron_right</span>
+                    <span class="text-gray-700 font-semibold truncate max-w-xs" x-text="selectedArticle.title"></span>
+                </li>
+            </template>
+        </ol>
+    </nav>
+    
+    <!-- Main View: Search and Categories -->
+    <div x-show="kbView === 'main'">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4">Knowledge Base</h1>
+            <p class="text-lg text-gray-600">Your central hub for guides, solutions, and troubleshooting.</p>
+        </div>
+        <div class="max-w-3xl mx-auto mb-12 relative">
+            <span class="material-icons absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-2xl">search</span>
+            <input type="text" x-model.debounce.300ms="kbSearchQuery" placeholder="How can we help?" class="w-full p-4 pl-14 border-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg">
+            <div x-show="kbSearchQuery.length >= 2" class="absolute w-full bg-white rounded-lg shadow-lg mt-2 max-h-80 overflow-y-auto z-20" x-cloak>
+                <ul>
+                    <template x-for="article in searchResults" :key="article.id">
+                        <li @click="selectArticle(article)" class="p-4 hover:bg-blue-50 cursor-pointer border-b"><h4 class="font-semibold text-blue-700" x-text="article.title"></h4><p class="text-sm text-gray-600" x-text="`${article.content.replace(/<[^>]+>/g, '').substring(0, 100)}...`"></p></li>
+                    </template>
+                    <template x-if="searchResults.length === 0"><li class="p-4 text-center text-gray-500">No results found.</li></template>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold mb-4">Browse by Category</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <template x-for="category in kbCategories" :key="category.id">
+                    <div @click="selectCategory(category)" class="bg-white p-6 rounded-lg shadow hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer flex flex-col">
+                        <span class="material-icons text-blue-600 text-4xl mb-3" x-text="category.icon"></span>
+                        <h3 class="text-lg font-bold mb-2" x-text="category.name"></h3>
+                        <p class="text-gray-600 text-sm flex-grow" x-text="category.description"></p>
+                        <p class="text-sm text-gray-500 mt-4" x-text="`${articleCountByCategory[category.id] || 0} articles`"></p>
+                    </div>
+                </template>
+            </div>
+        </div>
+        
+        <div>
+            <h2 class="text-2xl font-bold mb-4">Frequently Asked Questions</h2>
+            <div class="bg-white rounded-lg shadow">
+                <ul class="divide-y divide-gray-200">
+                    <template x-for="faq in faqs" :key="faq.id">
+                        <li @click="selectArticle(faq)" class="p-4 hover:bg-gray-50 cursor-pointer flex justify-between items-center"><span class="font-medium text-gray-800" x-text="faq.title"></span><span class="material-icons text-gray-400">chevron_right</span></li>
+                    </template>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Category View: List of Articles -->
+    <div x-show="kbView === 'category' && selectedCategory" x-cloak>
+        <h1 class="text-3xl font-bold mb-2" x-text="selectedCategory.name"></h1>
+        <p class="text-gray-600 mb-6" x-text="selectedCategory.description"></p>
+        <div class="bg-white rounded-lg shadow">
+            <ul class="divide-y divide-gray-200">
+                <template x-for="article in articlesInCategory" :key="article.id">
+                    <li @click="selectArticle(article)" class="p-4 hover:bg-gray-50 cursor-pointer flex justify-between items-center"><span class="font-medium text-gray-800" x-text="article.title"></span><span class="material-icons text-gray-400">chevron_right</span></li>
+                </template>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Article View: Full Article Content -->
+    <div x-show="kbView === 'article' && selectedArticle" class="grid grid-cols-1 lg:grid-cols-3 gap-8" x-cloak>
+        <div class="lg:col-span-2 bg-white p-8 rounded-lg shadow">
+            <h1 class="text-4xl font-bold mb-6" x-text="selectedArticle.title"></h1>
+            <div class="prose max-w-none" x-html="selectedArticle.content"></div>
+            <hr class="my-8">
+            <div class="text-center p-6 bg-gray-50 rounded-lg">
+                <h3 class="font-semibold mb-3">Was this article helpful?</h3>
+                <div class="flex justify-center items-center space-x-4">
+                    <div x-show="!articleFeedback[selectedArticle.id]">
+                        <button @click="submitFeedback(selectedArticle.id, 'yes')" class="px-6 py-2 rounded-full bg-white border border-green-500 text-green-600 hover:bg-green-500 hover:text-white transition flex items-center space-x-2"><span class="material-icons text-base">thumb_up</span><span>Yes</span></button>
+                        <button @click="submitFeedback(selectedArticle.id, 'no')" class="px-6 py-2 rounded-full bg-white border border-red-500 text-red-600 hover:bg-red-500 hover:text-white transition flex items-center space-x-2 ml-3"><span class="material-icons text-base">thumb_down</span><span>No</span></button>
+                    </div>
+                    <div x-show="articleFeedback[selectedArticle.id]" class="text-gray-600 font-medium" x-cloak>Thank you for your feedback!</div>
+                </div>
+            </div>
+        </div>
+        <div class="lg:col-span-1"><div class="bg-white p-6 rounded-lg shadow sticky top-24">
+            <h3 class="text-lg font-bold mb-4">Related Articles</h3>
+            <ul class="space-y-3">
+                <template x-for="related in relatedArticles" :key="related.id">
+                    <li><a @click.prevent="selectArticle(related)" href="#" class="text-blue-600 hover:underline" x-text="related.title"></a></li>
+                </template>
+                <template x-if="relatedArticles.length === 0"><li class="text-sm text-gray-500">No related articles found.</li></template>
+            </ul>
+        </div></div>
+    </div>
+</div>
+
+<!-- Alpine.js script for the interactive components of this page -->
+<script>
+    function knowledgeBaseState() {
+        // Mock data. In Django, you will pass this data from your view as a JSON object.
+        const kbCategories = [ { id: 1, name: 'Hardware Troubleshooting', description: 'Solutions for server, printer, and component issues.', icon: 'memory' }, { id: 2, name: 'Network Issues', description: 'Fixing connectivity, firewall, and switch problems.', icon: 'router' }, { id: 3, name: 'Software Guides', description: 'How-to guides for internal applications and OS.', icon: 'description' }, { id: 4, name: 'Printer Fixes', description: 'Common solutions for all office printing devices.', icon: 'print' } ];
+        const kbArticles = [ { id: 101, categoryId: 1, title: 'Resolving Fuser Error 59.F0', content: '<p>The <strong>59.F0 error</strong> on HP printers typically indicates a problem with the fuser motor. Follow these steps to resolve it:</p><ol class="list-decimal list-inside space-y-2 mt-2"><li>Turn the printer off and wait for 30 seconds.</li><li>Disconnect the power cord from the printer and the wall outlet.</li><li>Open the printer access doors and check for any jammed paper in the fuser area.</li><li>Reconnect the power cord and turn the printer on.</li></ol><p class="mt-4">If the error persists, the fuser assembly or the motor may need to be replaced. Contact a certified technician.</p>', views: 125 }, { id: 102, categoryId: 1, title: 'Diagnosing Server RAM Failures', content: '<p>Memory issues can cause system crashes and data corruption. Use memory diagnostic tools like MemTest86 to check for errors. Look for beep codes on startup.</p>', views: 88 }, { id: 201, categoryId: 2, title: 'Troubleshooting Intermittent Wi-Fi Connectivity', content: '<p>Intermittent Wi-Fi can be caused by channel interference, outdated drivers, or router placement. Try changing the Wi-Fi channel on your router to 1, 6, or 11. Ensure the device network drivers are up to date.</p>', views: 210 }, { id: 202, categoryId: 2, title: 'Configuring a new Cisco Catalyst 9300 Switch', content: '<p>Initial setup guide for the Cisco Catalyst 9300 series switches, including basic VLAN configuration and enabling SSH access.</p>', views: 150 }, { id: 301, categoryId: 3, title: 'Deploying Software via Group Policy', content: '<p>A step-by-step guide to deploying MSI packages using Windows Server Group Policy Objects (GPO).</p>', views: 95 }, { id: 401, categoryId: 4, title: 'Clearing a Paper Jam in HP Indigo 7900', content: '<p>Follow the on-screen instructions carefully. Ensure all paper fragments are removed from the paper path to avoid repeat jams.</p><iframe class="w-full aspect-video my-4 rounded-lg shadow-md" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>', views: 180 }, { id: 402, categoryId: 4, title: 'Replacing Toner Cartridges', content: '<p>A generic guide to replacing toner cartridges. Always wear gloves and dispose of old cartridges responsibly.</p>', views: 75 } ];
+            
+        return {
+            kbView: 'main', 
+            kbCategories: kbCategories, 
+            kbArticles: kbArticles, 
+            selectedCategory: null, 
+            selectedArticle: null, 
+            kbSearchQuery: '', 
+            articleFeedback: {},
+            
+            get articleCountByCategory() { return this.kbCategories.reduce((acc, category) => { acc[category.id] = this.kbArticles.filter(a => a.categoryId === category.id).length; return acc; }, {}); },
+            get faqs() { return [...this.kbArticles].sort((a, b) => b.views - a.views).slice(0, 5); },
+            get searchResults() { if (this.kbSearchQuery.length < 2) return []; const query = this.kbSearchQuery.toLowerCase(); return this.kbArticles.filter(article => article.title.toLowerCase().includes(query) || article.content.toLowerCase().includes(query)); },
+            get articlesInCategory() { if (!this.selectedCategory) return []; return this.kbArticles.filter(a => a.categoryId === this.selectedCategory.id); },
+            get relatedArticles() { if (!this.selectedArticle) return []; return this.kbArticles.filter(a => a.categoryId === this.selectedArticle.categoryId && a.id !== this.selectedArticle.id).slice(0, 3); },
+            
+            selectCategory(category) { this.selectedCategory = category; this.selectedArticle = null; this.kbView = 'category'; },
+            selectArticle(article) { this.selectedArticle = article; if (!this.selectedCategory || this.selectedCategory.id !== article.categoryId) { this.selectedCategory = this.kbCategories.find(c => c.id === article.categoryId); } this.kbView = 'article'; this.kbSearchQuery = ''; },
+            navigateToBreadcrumb(crumb) { if (crumb.view === 'main') { this.selectedCategory = null; this.selectedArticle = null; this.kbView = 'main'; } else if (crumb.view === 'category') { this.selectCategory(crumb.category); } },
+            submitFeedback(articleId, feedback) { this.articleFeedback[articleId] = feedback; }
+        }
+    }
+</script>
+
+{% endblock %}

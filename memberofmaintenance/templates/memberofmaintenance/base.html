@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>PRISM - Member of Maintenance</title>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style type="text/tailwindcss">
+        body { font-family: 'Roboto', sans-serif; }
+        .sidebar { width: 250px; transition: width 0.3s ease; }
+        .sidebar.collapsed { width: 80px; }
+        .sidebar .nav-text { display: inline; }
+        .sidebar.collapsed .nav-text { display: none; }
+        .sidebar.collapsed .submenu { display: none; }
+        .sidebar.collapsed .arrow-icon { display: none; }
+        .sidebar .logo-text { display: inline; }
+        .sidebar.collapsed .logo-text { display: none; }
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-100 flex" x-data="{}">
+    <!-- Sidebar -->
+    <aside class="sidebar bg-white h-screen p-4 flex flex-col justify-between sticky top-0" id="sidebar">
+        <div>
+            <div class="flex items-center mb-8">
+                <span class="material-icons text-blue-600 text-3xl">apps</span>
+                <span class="logo-text text-xl font-bold ml-2">PRISM</span>
+            </div>
+            <nav class="flex flex-col space-y-2">
+                <!-- Django URL for Dashboard -->
+                <a href="{% url 'memberofmaintenance:dashboard' %}" class="flex items-center p-2 text-gray-700 hover:bg-blue-50 rounded-lg cursor-pointer">
+                    <span class="material-icons">dashboard</span>
+                    <span class="nav-text ml-4">Dashboard</span>
+                </a>
+                
+                <div x-data="{ open: true }">
+                    <button @click="open = !open" class="w-full flex items-center justify-between p-2 text-gray-700 bg-blue-100 rounded-lg">
+                        <div class="flex items-center">
+                            <span class="material-icons text-blue-600">build</span>
+                            <span class="nav-text ml-4">Service Management</span>
+                        </div>
+                        <span class="material-icons arrow-icon" x-text="open ? 'expand_less' : 'expand_more'">expand_less</span>
+                    </button>
+                    <div class="submenu mt-2 ml-6 space-y-2" x-show="open">
+                        <!-- Django URLs for Service Management -->
+                        <a href="{% url 'memberofmaintenance:ticket_system' %}" class="block p-2 text-gray-600 hover:bg-blue-50 rounded-lg cursor-pointer">Ticketing System</a>
+                        <a href="{% url 'memberofmaintenance:scheduled_maintenance' %}" class="block p-2 text-gray-600 hover:bg-blue-50 rounded-lg cursor-pointer">Scheduled Maintenance</a>
+                        <a href="{% url 'memberofmaintenance:knowledge_base' %}" class="block p-2 text-gray-600 hover:bg-blue-50 rounded-lg cursor-pointer">Knowledge Base</a>
+                    </div>
+                </div>
+
+                <div x-data="{ open: true }">
+                    <button @click="open = !open" class="w-full flex items-center justify-between p-2 text-gray-700 hover:bg-blue-50 rounded-lg">
+                        <div class="flex items-center">
+                            <span class="material-icons">store</span>
+                            <span class="nav-text ml-4">Store &amp; Inventory</span>
+                        </div>
+                        <span class="material-icons arrow-icon" x-text="open ? 'expand_less' : 'expand_more'">expand_more</span>
+                    </button>
+                     <div class="submenu mt-2 ml-6 space-y-2" x-show="open">
+                        <!-- Django URLs for Store & Inventory -->
+                        <a href="{% url 'memberofmaintenance:asset_management' %}" class="block p-2 text-gray-600 hover:bg-blue-50 rounded-lg cursor-pointer">Asset Management</a>
+                        <a href="{% url 'memberofmaintenance:inventory_requisition' %}" class="block p-2 text-gray-600 hover:bg-blue-50 rounded-lg">Inventory Requisition</a>
+                    </div>
+                </div>
+
+                <div x-data="{ open: true }">
+                    <button @click="open = !open" class="w-full flex items-center justify-between p-2 text-gray-700 hover:bg-blue-50 rounded-lg">
+                        <div class="flex items-center">
+                            <span class="material-icons">work</span>
+                            <span class="nav-text ml-4">Project Management</span>
+                        </div>
+                        <span class="material-icons arrow-icon" x-text="open ? 'expand_less' : 'expand_more'">expand_more</span>
+                    </button>
+                    <div class="submenu mt-2 ml-6 space-y-2" x-show="open">
+                        <!-- Django URL for Project Management -->
+                        <a href="{% url 'memberofmaintenance:maintenance_contracts' %}" class="block p-2 text-gray-600 hover:bg-blue-50 rounded-lg">Maintenance Contracts</a>
+                    </div>
+                </div>
+
+                <!-- Django URL for Analytics -->
+                <a href="{% url 'memberofmaintenance:analytics_reporting' %}" class="flex items-center p-2 text-gray-700 hover:bg-blue-50 rounded-lg">
+                    <span class="material-icons">analytics</span>
+                    <span class="nav-text ml-4">Analytics &amp; Reporting</span>
+                </a>
+            </nav>
+        </div>
+        <div>
+            <!-- Django URLs for Settings and Help -->
+            <a href="{% url 'memberofmaintenance:system_settings' %}" class="flex items-center p-2 text-gray-700 hover:bg-blue-50 rounded-lg">
+                <span class="material-icons">settings</span>
+                <span class="nav-text ml-4">System Settings</span>
+            </a>
+            <a href="{% url 'memberofmaintenance:help_page' %}" class="flex items-center p-2 text-gray-700 hover:bg-blue-50 rounded-lg">
+                <span class="material-icons">help_outline</span>
+                <span class="nav-text ml-4">Help</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Block -->
+    <main class="flex-1 p-8 w-full">
+        {% block content %}
+        <!-- The content from other templates will be inserted here -->
+        {% endblock %}
+    </main>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        let isCollapsed = true; 
+        function setSidebarState(collapsed) { isCollapsed ? sidebar.classList.add('collapsed') : sidebar.classList.remove('collapsed'); }
+        sidebar.addEventListener('mouseenter', () => { isCollapsed = false; setSidebarState(isCollapsed); });
+        sidebar.addEventListener('mouseleave', () => { isCollapsed = true; setSidebarState(isCollapsed); });
+        setSidebarState(isCollapsed);
+    </script>
+</body>
+</html>

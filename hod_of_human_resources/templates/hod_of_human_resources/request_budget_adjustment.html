@@ -1,0 +1,37 @@
+{% extends 'hod_of_human_resources/base.html' %}
+{% load static %}
+
+{% block title %}Request Budget Adjustment - PRISM HR{% endblock %}
+{% block active_view %}financials{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Request Budget Adjustment</h1>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_category" class="form-label">Budget Category</label>
+            {{ form.category }}
+            {% if form.category.errors %}
+                <div class="text-danger">{{ form.category.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="id_amount" class="form-label">Adjustment Amount</label>
+            {{ form.amount }}
+            {% if form.amount.errors %}
+                <div class="text-danger">{{ form.amount.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="id_reason" class="form-label">Reason for Adjustment</label>
+            {{ form.reason }}
+            {% if form.reason.errors %}
+                <div class="text-danger">{{ form.reason.errors }}</div>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Submit Request</button>
+        <a href="{% url 'hod_of_human_resources:financials' %}" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div>
+{% endblock %}

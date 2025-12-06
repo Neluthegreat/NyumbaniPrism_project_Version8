@@ -1,0 +1,96 @@
+{% extends 'hod_of_human_resources/base.html' %}
+{% load static %}
+
+{% block title %}Manage Policy - PRISM HR{% endblock %}
+{% block active_view %}hrManagement{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+            <h1 class="text-2xl font-bold text-gray-900">
+                {% if policy %}Edit Policy: {{ policy.title }}{% else %}Create New Policy{% endif %}
+            </h1>
+            <p class="mt-1 text-sm text-gray-600">
+                {% if policy %}Update the policy details below.{% else %}Fill in the details to create a new HR policy.{% endif %}
+            </p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="px-6 py-6">
+            {% csrf_token %}
+
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div class="sm:col-span-2">
+                    <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Policy Title
+                    </label>
+                    <div class="mt-1">
+                        {{ form.title }}
+                    </div>
+                    {% if form.title.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.title.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="{{ form.version.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Version
+                    </label>
+                    <div class="mt-1">
+                        {{ form.version }}
+                    </div>
+                    {% if form.version.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.version.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Status
+                    </label>
+                    <div class="mt-1">
+                        {{ form.status }}
+                    </div>
+                    {% if form.status.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.status.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label for="{{ form.content.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Policy Content
+                    </label>
+                    <div class="mt-1">
+                        {{ form.content }}
+                    </div>
+                    {% if form.content.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.content.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label for="{{ form.document.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        Policy Document (PDF) - Optional
+                    </label>
+                    <div class="mt-1">
+                        {{ form.document }}
+                    </div>
+                    {% if form.document.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.document.errors.0 }}</p>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Upload a PDF document if available. Maximum file size: 10MB.</p>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-end space-x-3">
+                <a href="{% url 'hod_of_human_resources:hr_management' %}?tab=policy" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Cancel
+                </a>
+                <button type="submit" class="bg-blue-600 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    {% if policy %}Update Policy{% else %}Create Policy{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
