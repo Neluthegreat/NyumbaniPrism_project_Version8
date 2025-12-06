@@ -1,0 +1,64 @@
+{% extends 'Developer_staff/base_developer.html' %}
+
+{% block title %}Client Projects{% endblock %}
+
+{% block content %}
+<div id="customer-management-view">
+    <h1 class="text-4xl font-bold text-gray-800">My Client Projects</h1>
+    <p class="mt-2 text-lg text-gray-600">Access client collaboration portals for your assigned projects.</p>
+
+    <!-- Action Bar with filters -->
+    <div class="mt-8 flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+            <div>
+                <label class="sr-only" for="status-filter">Filter by Status</label>
+                <select class="pl-3 pr-10 py-2 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" id="status-filter" name="status-filter">
+                    <option>Active Projects</option>
+                    <option>Completed Projects</option>
+                    <option>Maintenance Phase</option>
+                </select>
+            </div>
+            <div class="relative">
+                <span class="material-icons-sharp absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+                <input class="pl-10 pr-4 py-2 border border-gray-300 rounded-md sm:text-sm focus:ring-blue-500 focus:border-blue-500" id="search-project" name="search-project" placeholder="Search by Project or Client" type="text"/>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Grid of Project Cards -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for project in projects %}
+        <a class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 p-6 flex flex-col justify-between cursor-pointer group" href="#">
+            <div>
+                <div class="flex justify-between items-start">
+                    <h2 class="text-2xl font-bold text-gray-900 group-hover:text-blue-600">{{ project.name }}</h2>
+                    <!-- Placeholder notifications -->
+                    <div class="flex space-x-2">
+                        {% if project.new_feedback_count > 0 %}
+                        <span class="inline-flex items-center justify-center h-6 w-6 rounded-full bg-red-500 text-white text-xs font-bold" title="New Feedback">{{ project.new_feedback_count }}</span>
+                        {% endif %}
+                        {% if project.new_messages_count > 0 %}
+                        <span class="inline-flex items-center justify-center h-6 w-6 rounded-full bg-blue-500 text-white text-xs font-bold" title="New Messages">{{ project.new_messages_count }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="flex items-center mt-2">
+                    <!-- Placeholder logo -->
+                    <span class="material-icons-sharp mr-3 text-gray-400">business</span> 
+                    <p class="text-gray-600 font-medium">{{ project.client_name }}</p>
+                </div>
+                <div class="mt-4 border-t pt-4">
+                    <!-- This would require linking to a contact model, showing a placeholder for now -->
+                    <p class="text-sm font-medium text-gray-800">Client Contact</p>
+                    <p class="text-sm text-gray-500">Project Manager</p>
+                </div>
+            </div>
+        </a>
+        {% empty %}
+        <div class="col-span-1 md:col-span-2 lg:col-span-3 bg-white p-6 rounded-lg shadow-sm text-center">
+            <p class="text-gray-500">You are not assigned to any client projects.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

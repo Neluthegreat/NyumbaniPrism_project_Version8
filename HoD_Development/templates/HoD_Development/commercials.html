@@ -1,0 +1,49 @@
+{% extends 'HoD_Development/base.html' %}
+
+{% block title %}Commercials{% endblock %}
+
+{% block content %}
+<div id="commercials-view">
+    <header class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Commercials</h1>
+        <p class="text-gray-500 mt-1">Manage invoices, contracts, and statements of work.</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Invoices Card -->
+        <a href="{% url 'HoD_Development:invoices' %}" class="group bg-white p-6 rounded-lg shadow-md hover:shadow-xl hover:bg-blue-50 transition-all duration-300 flex items-center space-x-6">
+            <div class="bg-blue-100 p-4 rounded-full">
+                <span class="material-icons text-3xl text-blue-600">receipt_long</span>
+            </div>
+            <div>
+                <h2 class="text-xl font-semibold text-gray-800">Invoices</h2>
+                <p class="text-gray-500 mt-1">View and manage client billing.</p>
+            </div>
+        </a>
+
+        <!-- Contracts Card -->
+        <a href="{% url 'HoD_Development:contracts' %}" class="group bg-white p-6 rounded-lg shadow-md hover:shadow-xl hover:bg-green-50 transition-all duration-300 flex items-center space-x-6">
+            <div class="bg-green-100 p-4 rounded-full">
+                <span class="material-icons text-3xl text-green-600">assignment</span>
+            </div>
+            <div>
+                <h2 class="text-xl font-semibold text-gray-800">Contracts</h2>
+                <p class="text-gray-500 mt-1">Access master service agreements.</p>
+            </div>
+        </a>
+
+        <!-- SOWs Card -->
+        <a href="{% url 'HoD_Development:sows' %}" class="group bg-white p-6 rounded-lg shadow-md hover:shadow-xl hover:bg-yellow-50 transition-all duration-300 flex items-center space-x-6">
+            <div class="bg-yellow-100 p-4 rounded-full">
+                <span class="material-icons text-3xl text-yellow-600">description</span>
+            </div>
+            <div>
+                <h2 class="text-xl font-semibold text-gray-800">Statements of Work</h2>
+                <p class="text-gray-500 mt-1">Review active project SOWs.</p>
+            </div>
+        </a>
+    </div>
+
+    <!-- You can add more summary tables or charts here later -->
+</div>
+{% endblock %}
